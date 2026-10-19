@@ -27,20 +27,29 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.PowerSettingsNew
+import android.widget.Toast
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -64,6 +73,19 @@ fun HomeScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
+
+    var showAddMenuDialog by remember { mutableStateOf(false) }
+    var showImportSubDialog by remember { mutableStateOf(false) }
+    var subscriptionUrlInput by remember { mutableStateOf("") }
+    var showProfileImportedBanner by remember { mutableStateOf(false) }
+
+    LaunchedEffect(showProfileImportedBanner) {
+        if (showProfileImportedBanner) {
+            delay(2000)
+            showProfileImportedBanner = false
+        }
+    }
 
     val isConnected = state.vpnState is VpnState.Connected
     val isConnecting = state.vpnState is VpnState.Connecting
@@ -91,7 +113,7 @@ fun HomeScreen(
     ) {
         Spacer(modifier = Modifier.height(12.dp))
 
-        // 1. TOP BAR (Streisand Exact: Edit | Profile imported | +)
+        // 1. TOP BAR (Streisand Exact: Edit | Profile imported (temporary 2s) | +)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -107,37 +129,45 @@ fun HomeScreen(
                 }
             )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Box(
+            if (showProfileImportedBanner) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
                     modifier = Modifier
-                        .size(18.dp)
-                        .clip(CircleShape)
-                        .background(IosGreen),
-                    contentAlignment = Alignment.Center
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color.White.copy(alpha = 0.1f))
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(12.dp)
+                    Box(
+                        modifier = Modifier
+                            .size(16.dp)
+                            .clip(CircleShape)
+                            .background(IosGreen),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(11.dp)
+                        )
+                    }
+                    Text(
+                        text = "Profile imported",
+                        fontSize = 13.5.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
-                Text(
-                    text = "Profile imported",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+            } else {
+                Spacer(modifier = Modifier.width(1.dp))
             }
 
             Box(
                 modifier = Modifier
                     .size(32.dp)
                     .clickable {
-                        navController.navigate(Screen.Profiles.route)
+                        showAddMenuDialog = true
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -539,6 +569,150 @@ fun HomeScreen(
         }
 
         Spacer(modifier = Modifier.height(24.dp))
+    }
+
+    // 6. ADD MENU DIALOG (Streisand Exact with Import Subscription)
+    if (showAddMenuDialog) {
+        AlertDialog(
+            onDismissRequest = { showAddMenuDialog = false },
+            title = {
+                Text(
+                    text = "افزودن کانفیگ و اشتراک جدید",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    // 1. IMPORT SUBSCRIPTION (Manual Subscription Entry)
+                    Button(
+                        onClick = {
+                            showAddMenuDialog = false
+                            val clip = clipboardManager.getText()?.text ?: ""
+                            if (clip.startsWith("http://") || clip.startsWith("https://")) {
+                                subscriptionUrlInput = clip
+                            }
+                            showImportSubDialog = true
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = IosBlue),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("📥 افزودن دستی لینک اشتراک", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+
+                    // 2. Import from clipboard
+                    OutlinedButton(
+                        onClick = {
+                            showAddMenuDialog = false
+                            val clip = clipboardManager.getText()?.text ?: ""
+                            viewModel.importFromClipboard(clip) { success, msg ->
+                                Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                                if (success) {
+                                    showProfileImportedBanner = true
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("📋 افزودن از کلیپ‌بورد", fontWeight = FontWeight.Medium)
+                    }
+
+                    // 3. Scan QR Code
+                    OutlinedButton(
+                        onClick = {
+                            showAddMenuDialog = false
+                            Toast.makeText(context, "اسکن بارکد QR", Toast.LENGTH_SHORT).show()
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("📷 اسکن کد QR", fontWeight = FontWeight.Medium)
+                    }
+
+                    // 4. Manual Config
+                    OutlinedButton(
+                        onClick = {
+                            showAddMenuDialog = false
+                            navController.navigate(Screen.Servers.route)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text("✍️ تنظیم دستی کانفیگ", fontWeight = FontWeight.Medium)
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showAddMenuDialog = false }) {
+                    Text("انصراف", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            shape = RoundedCornerShape(20.dp)
+        )
+    }
+
+    // 7. IMPORT SUBSCRIPTION INPUT DIALOG (Manual Entry)
+    if (showImportSubDialog) {
+        AlertDialog(
+            onDismissRequest = { showImportSubDialog = false },
+            title = {
+                Text(
+                    text = "افزودن دستی لینک اشتراک",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = "لینک ساب‌اسکریپشن را در کادر زیر وارد یا جای‌گذاری کنید:",
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    OutlinedTextField(
+                        value = subscriptionUrlInput,
+                        onValueChange = { subscriptionUrlInput = it },
+                        placeholder = { Text("https://example.com/sub/...") },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showImportSubDialog = false
+                        viewModel.importSubscription(subscriptionUrlInput) { success, msg ->
+                            Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                            if (success) {
+                                showProfileImportedBanner = true
+                                subscriptionUrlInput = ""
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = IosBlue),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Text("بارگذاری", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showImportSubDialog = false }) {
+                    Text("انصراف")
+                }
+            },
+            shape = RoundedCornerShape(20.dp)
+        )
     }
 }
 

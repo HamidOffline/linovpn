@@ -52,9 +52,9 @@
     <string name="settings_title">تنظیمات</string>
     <string name="core_selection">هسته پیش‌فرض</string>
     <string name="routing_rules">قوانین مسیریابی</string>
-    <string name="split_tunneling">پروکسی برنامه‌های انتخابی (Split Tunneling)</string>
+    <string name="split_tunneling">پروکسی برنامه‌های انتخابی</string>
     <string name="dns_settings">تنظیمات DNS</string>
-    <string name="kill_switch">کلید قطع اضطراری (Kill Switch)</string>
+    <string name="kill_switch">کلید قطع اضطراری</string>
     <string name="auto_connect">اتصال خودکار پس از روشن شدن دستگاه</string>
     <string name="about_linovpn">درباره LinoVPN</string>
     <string name="join_telegram">عضویت در کانال تلگرام LinoVPN</string>

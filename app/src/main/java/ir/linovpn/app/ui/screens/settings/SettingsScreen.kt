@@ -105,7 +105,7 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Theme Mode Section
-            SettingsSectionHeader(title = "پوسته‌ی برنامه (Theme Mode)")
+            SettingsSectionHeader(title = "پوسته‌ی برنامه")
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -115,8 +115,8 @@ fun SettingsScreen(
                 Column(modifier = Modifier.padding(12.dp)) {
                     val themes = listOf(
                         AppThemeMode.SYSTEM to "پیروی از حالت سیستم (خودکار)",
-                        AppThemeMode.DARK to "تم تیره (Dark Theme)",
-                        AppThemeMode.LIGHT to "تم روشن (Light Theme)"
+                        AppThemeMode.DARK to "تم تیره",
+                        AppThemeMode.LIGHT to "تم روشن"
                     )
                     themes.forEachIndexed { index, (mode, label) ->
                         Row(
@@ -152,7 +152,7 @@ fun SettingsScreen(
             }
 
             // Core selection section
-            SettingsSectionHeader(title = "هسته پیش‌فرض (Engine Core)")
+            SettingsSectionHeader(title = "هسته پیش‌فرض")
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -200,7 +200,7 @@ fun SettingsScreen(
             }
 
             // Routing & DNS Section
-            SettingsSectionHeader(title = "مسیریابی و شبکه (Routing & DNS)")
+            SettingsSectionHeader(title = "مسیریابی و شبکه")
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -210,7 +210,7 @@ fun SettingsScreen(
                 Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                     SettingSwitchItem(
                         icon = Icons.Default.Route,
-                        title = "عبور سایت‌های ایرانی (Bypass Iran)",
+                        title = "عبور سایت‌های ایرانی",
                         subtitle = "سایت‌های داخلی و بانکی بدون VPN و با سرعت بالا باز شوند",
                         checked = dnsConfig.bypassIran,
                         onCheckedChange = {
@@ -222,8 +222,8 @@ fun SettingsScreen(
 
                     SettingSwitchItem(
                         icon = Icons.Default.Dns,
-                        title = "DNS امن (DoH - DNS over HTTPS)",
-                        subtitle = "رمزگذاری درخواست‌های DNS برای مقابله با فیلترینگ DNS",
+                        title = "سامانه نام دامنه امن (DoH)",
+                        subtitle = "رمزگذاری درخواست‌های DNS برای مقابله با اختلال و فیلترینگ",
                         checked = dnsConfig.dnsOverHttps,
                         onCheckedChange = {
                             viewModel.setDnsConfig(dnsConfig.copy(dnsOverHttps = it))
@@ -250,7 +250,7 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.width(12.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "مستثنی کردن برنامه‌ها (Split Tunneling)",
+                                text = "مستثنی کردن برنامه‌ها",
                                 style = MaterialTheme.typography.bodyMedium.copy(
                                     color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.Medium
@@ -279,7 +279,7 @@ fun SettingsScreen(
             }
 
             // Security Section
-            SettingsSectionHeader(title = "امنیت و اتصال (Security & Auto-Connect)")
+            SettingsSectionHeader(title = "امنیت و اتصال")
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -289,7 +289,7 @@ fun SettingsScreen(
                 Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                     SettingSwitchItem(
                         icon = Icons.Default.Lock,
-                        title = "کیل سوییچ (Kill Switch)",
+                        title = "قطع اضطراری اینترنت (Kill Switch)",
                         subtitle = "قطع کامل اینترنت در صورت قطع ارتباط VPN",
                         checked = isKillSwitch,
                         onCheckedChange = { viewModel.setKillSwitch(it) }
