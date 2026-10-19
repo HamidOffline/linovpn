@@ -610,9 +610,10 @@ fun HomeScreen(
                             showAddMenuDialog = false
                             val clip = clipboardManager.getText()?.text ?: ""
                             viewModel.importFromClipboard(clip) { success, msg ->
-                                Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
                                 if (success) {
                                     showProfileImportedBanner = true
+                                } else {
+                                    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                                 }
                             }
                         },
@@ -693,10 +694,11 @@ fun HomeScreen(
                     onClick = {
                         showImportSubDialog = false
                         viewModel.importSubscription(subscriptionUrlInput) { success, msg ->
-                            Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
                             if (success) {
                                 showProfileImportedBanner = true
                                 subscriptionUrlInput = ""
+                            } else {
+                                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                             }
                         }
                     },
