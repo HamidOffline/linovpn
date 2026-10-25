@@ -76,6 +76,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun LinoVpnTheme(
     themeMode: AppThemeMode = AppThemeMode.SYSTEM,
+    fontMode: ir.linovpn.app.domain.model.AppFont = ir.linovpn.app.domain.model.AppFont.VAZIRMATN,
     content: @Composable () -> Unit
 ) {
     val isDark = when (themeMode) {
@@ -100,7 +101,7 @@ fun LinoVpnTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = getAppTypography(fontMode),
         content = content
     )
 }

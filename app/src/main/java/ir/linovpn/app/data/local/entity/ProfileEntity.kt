@@ -12,7 +12,12 @@ data class ProfileEntity(
     val serverCount: Int,
     val lastUpdated: Long,
     val autoUpdate: Boolean,
-    val updateIntervalHours: Int
+    val updateIntervalHours: Int,
+    val uploadBytes: Long = 0L,
+    val downloadBytes: Long = 0L,
+    val totalBytes: Long = 0L,
+    val expireTimestamp: Long = 0L,
+    val trafficSummary: String? = null
 ) {
     fun toDomain(): Profile = Profile(
         id = id,
@@ -21,7 +26,12 @@ data class ProfileEntity(
         serverCount = serverCount,
         lastUpdated = lastUpdated,
         autoUpdate = autoUpdate,
-        updateIntervalHours = updateIntervalHours
+        updateIntervalHours = updateIntervalHours,
+        uploadBytes = uploadBytes,
+        downloadBytes = downloadBytes,
+        totalBytes = totalBytes,
+        expireTimestamp = expireTimestamp,
+        trafficSummary = trafficSummary
     )
 
     companion object {
@@ -32,7 +42,12 @@ data class ProfileEntity(
             serverCount = profile.serverCount,
             lastUpdated = profile.lastUpdated,
             autoUpdate = profile.autoUpdate,
-            updateIntervalHours = profile.updateIntervalHours
+            updateIntervalHours = profile.updateIntervalHours,
+            uploadBytes = profile.uploadBytes,
+            downloadBytes = profile.downloadBytes,
+            totalBytes = profile.totalBytes,
+            expireTimestamp = profile.expireTimestamp,
+            trafficSummary = profile.trafficSummary
         )
     }
 }

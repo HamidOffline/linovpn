@@ -76,7 +76,7 @@ data class Server(
     val username: String? = null,
     // Status & Metadata
     val profileId: String? = null,
-    val latency: Long = -1L,        // -1 = untracked, -2 = timeout
+    val latency: Long = 0L,        // 0 = untested, >0 = ms, -1 = timeout
     val isSelected: Boolean = false,
     val isFavorite: Boolean = false,
     val rawUri: String? = null,

@@ -60,7 +60,9 @@ class ParseSubscriptionUseCase @Inject constructor() {
         val userInfo = uri.userInfo ?: ""
         val host = uri.host ?: ""
         val port = if (uri.port > 0) uri.port else 443
-        val fragment = uri.fragment?.let { URLDecoder.decode(it, "UTF-8") } ?: "VLESS - $host"
+        val fragment = uri.fragment?.let {
+            runCatching { URLDecoder.decode(it, "UTF-8") }.getOrDefault(it)
+        }?.takeIf { it.isNotBlank() } ?: "VLESS - $host"
 
         val flow = uri.getQueryParameter("flow")
         val security = uri.getQueryParameter("security") ?: "tls"
@@ -68,6 +70,7 @@ class ParseSubscriptionUseCase @Inject constructor() {
         val pbk = uri.getQueryParameter("pbk")
         val sid = uri.getQueryParameter("sid")
         val sni = uri.getQueryParameter("sni")
+        val hostHeader = uri.getQueryParameter("host") ?: sni
         val fp = uri.getQueryParameter("fp") ?: "chrome"
         val spx = uri.getQueryParameter("spx")
         val path = uri.getQueryParameter("path")
@@ -89,6 +92,7 @@ class ParseSubscriptionUseCase @Inject constructor() {
             fingerprint = fp,
             spiderX = spx,
             path = path,
+            hostHeader = hostHeader,
             serviceName = serviceName,
             profileId = profileId,
             rawUri = link
@@ -347,17 +351,45 @@ class ParseSubscriptionUseCase @Inject constructor() {
 
     private fun tryDecodeBase64(input: String): String? {
         val clean = input.replace("\n", "").replace("\r", "").trim()
-        val flags = Base64.NO_WRAP or Base64.URL_SAFE
-        return try {
-            val bytes = Base64.decode(clean, flags)
-            String(bytes, Charsets.UTF_8)
-        } catch (e: Throwable) {
-            try {
-                val bytes = Base64.decode(clean, Base64.DEFAULT)
-                String(bytes, Charsets.UTF_8)
-            } catch (e2: Throwable) {
-                null
-            }
+        if (clean.isBlank()) return null
+
+        // If it already looks like raw server links or Clash yaml, return as is
+        if (clean.contains("://") || clean.contains("proxies:") || clean.contains("outbounds:")) {
+            return clean
         }
+
+        // Apply proper 4-character padding
+        val padLen = (4 - (clean.length % 4)) % 4
+        val padded = clean + "=".repeat(padLen)
+
+        // 1. Try standard Base64 first (handles '/', '+', standard padding)
+        try {
+            val bytes = Base64.decode(padded, Base64.DEFAULT)
+            val str = String(bytes, Charsets.UTF_8)
+            if (isLikelyValidDecoded(str)) {
+                return str
+            }
+        } catch (_: Throwable) {}
+
+        // 2. Try URL_SAFE Base64 (handles '_', '-')
+        try {
+            val bytes = Base64.decode(padded, Base64.URL_SAFE or Base64.NO_WRAP)
+            val str = String(bytes, Charsets.UTF_8)
+            if (isLikelyValidDecoded(str)) {
+                return str
+            }
+        } catch (_: Throwable) {}
+
+        // 3. Last resort fallback
+        return try {
+            val bytes = Base64.decode(padded, Base64.DEFAULT)
+            String(bytes, Charsets.UTF_8)
+        } catch (_: Throwable) {
+            null
+        }
+    }
+
+    private fun isLikelyValidDecoded(str: String): Boolean {
+        return str.contains("://") || str.contains("proxies:") || str.contains("proxy-groups:")
     }
 }

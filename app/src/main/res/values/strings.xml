@@ -5,61 +5,69 @@
     <string name="channel_name">@LinoVPN</string>
 
     <!-- VPN States -->
-    <string name="vpn_disconnected">قطع اتصال</string>
-    <string name="vpn_connecting">در حال اتصال…</string>
-    <string name="vpn_connected">متصل</string>
-    <string name="vpn_disconnecting">در حال قطع…</string>
+    <string name="vpn_disconnected">Disconnected</string>
+    <string name="vpn_connecting">Connecting…</string>
+    <string name="vpn_connected">Connected</string>
+    <string name="vpn_disconnecting">Disconnecting…</string>
 
     <!-- Navigation -->
-    <string name="nav_home">خانه</string>
-    <string name="nav_servers">سرورها</string>
-    <string name="nav_profiles">اشتراک‌ها</string>
-    <string name="nav_settings">تنظیمات</string>
-    <string name="nav_logs">لاگ</string>
-    <string name="logs_title">گزارشات اتصال</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_servers">Servers</string>
+    <string name="nav_profiles">Subscriptions</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_logs">Logs</string>
+    <string name="logs_title">Connection Logs</string>
 
     <!-- Home -->
-    <string name="connect">اتصال</string>
-    <string name="disconnect">قطع اتصال</string>
-    <string name="no_server_selected">هیچ سروری انتخاب نشده</string>
-    <string name="select_server">انتخاب سرور</string>
-    <string name="tap_to_connect">برای اتصال لمس کنید</string>
-    <string name="upload_speed">ارسال</string>
-    <string name="download_speed">دریافت</string>
-    <string name="duration">مدت زمان</string>
-    <string name="test_ping">تست پینگ</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="no_server_selected">No Server Selected</string>
+    <string name="select_server">Select Server</string>
+    <string name="tap_to_connect">Tap to connect</string>
+    <string name="upload_speed">Upload</string>
+    <string name="download_speed">Download</string>
+    <string name="duration">Duration</string>
+    <string name="test_ping">Test Ping</string>
 
     <!-- Servers -->
-    <string name="servers_title">لیست سرورها</string>
-    <string name="search_servers">جستجوی سرور…</string>
-    <string name="add_server">افزودن سرور</string>
-    <string name="import_clipboard">وارد کردن از کلیپ‌بورد</string>
-    <string name="scan_qr">اسکن کد QR</string>
-    <string name="test_all_ping">تست پینگ همه</string>
-    <string name="delete_all_servers">حذف همه سرورها</string>
-    <string name="empty_servers">سروری یافت نشد. می‌توانید با دکمه + سرور یا اشتراک اضافه کنید.</string>
+    <string name="servers_title">Server List</string>
+    <string name="search_servers">Search servers…</string>
+    <string name="add_server">Add Server</string>
+    <string name="import_clipboard">Import from Clipboard</string>
+    <string name="scan_qr">Scan QR Code</string>
+    <string name="test_all_ping">Test All Pings</string>
+    <string name="delete_all_servers">Delete All Servers</string>
+    <string name="empty_servers">No servers found. Tap + to add servers or subscription.</string>
 
     <!-- Subscriptions -->
-    <string name="profiles_title">مدیریت اشتراک‌ها</string>
-    <string name="add_profile">افزودن اشتراک جدید</string>
-    <string name="profile_name">نام اشتراک</string>
-    <string name="profile_url">آدرس سابسکریپشن</string>
-    <string name="update_all">بروزرسانی همه</string>
-    <string name="updating">در حال بروزرسانی…</string>
-    <string name="last_updated">آخرین بروزرسانی</string>
+    <string name="profiles_title">Manage Subscriptions</string>
+    <string name="add_profile">Add Subscription</string>
+    <string name="profile_name">Subscription Name</string>
+    <string name="profile_url">Subscription URL</string>
+    <string name="update_all">Update All</string>
+    <string name="updating">Updating…</string>
+    <string name="last_updated">Last Updated</string>
 
     <!-- Settings -->
-    <string name="settings_title">تنظیمات</string>
-    <string name="core_selection">هسته پیش‌فرض</string>
-    <string name="routing_rules">قوانین مسیریابی</string>
-    <string name="split_tunneling">پروکسی برنامه‌های انتخابی</string>
-    <string name="dns_settings">تنظیمات DNS</string>
-    <string name="kill_switch">کلید قطع اضطراری</string>
-    <string name="auto_connect">اتصال خودکار پس از روشن شدن دستگاه</string>
-    <string name="about_linovpn">درباره LinoVPN</string>
-    <string name="join_telegram">عضویت در کانال تلگرام LinoVPN</string>
+    <string name="settings_title">Settings</string>
+    <string name="core_selection">Default Core</string>
+    <string name="routing_rules">Routing Rules</string>
+    <string name="split_tunneling">Split Tunneling</string>
+    <string name="dns_settings">DNS Settings</string>
+    <string name="kill_switch">Kill Switch</string>
+    <string name="auto_connect">Auto Connect on Boot</string>
+    <string name="about_linovpn">About LinoVPN</string>
+    <string name="join_telegram">Join LinoVPN Telegram Channel</string>
 
     <!-- Notification -->
-    <string name="notification_channel_name">وضعیت اتصال LinoVPN</string>
-    <string name="notification_channel_desc">نمایش وضعیت اتصال و آمار ترافیک</string>
+    <string name="notification_channel_name">LinoVPN Connection Status</string>
+    <string name="notification_channel_desc">Shows VPN connection state and network statistics</string>
+
+    <!-- Streisand Sub-screens -->
+    <string name="routing_settings">Routing</string>
+    <string name="subscription_settings">Subscription</string>
+    <string name="tunnel_settings">Tunnel</string>
+    <string name="ping_settings">Ping</string>
+    <string name="statistics_settings">Statistics</string>
+    <string name="about_lino">About Us</string>
 </resources>

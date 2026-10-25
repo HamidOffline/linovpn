@@ -21,7 +21,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
-            abiFilters.addAll(listOf("arm64-v8a", "x86_64"))
+            abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86"))
         }
 
         buildConfigField("String", "TELEGRAM_CHANNEL", "\"https://t.me/LinoVPN\"")
@@ -29,9 +29,28 @@ android {
         buildConfigField("String", "APP_NAME", "\"LinoVPN\"")
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("${rootDir}/linovpn.jks")
+            storePassword = "linovpn12345"
+            keyAlias = "linovpn"
+            keyPassword = "linovpn12345"
+        }
+    }
+
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
+            isUniversalApk = true
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

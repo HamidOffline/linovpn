@@ -33,50 +33,99 @@ object XrayConfigBuilder {
         server: XrayServerConfig,
         socksPort: Int = 10808,
         httpPort: Int = 10809,
+        tunFd: Int = -1,
         dnsServer: String = "1.1.1.1",
         bypassIran: Boolean = true
     ): String {
         val root = JSONObject()
+
+        // 0. Stats
+        root.put("stats", JSONObject())
 
         // 1. Log configuration
         val logObj = JSONObject()
         logObj.put("loglevel", "warning")
         root.put("log", logObj)
 
-        // 2. DNS
+        // 2. Policy
+        val policyObj = JSONObject().apply {
+            val levelsObj = JSONObject().apply {
+                val level8 = JSONObject().apply {
+                    put("handshake", 4)
+                    put("connIdle", 300)
+                    put("uplinkOnly", 1)
+                    put("downlinkOnly", 1)
+                }
+                put("8", level8)
+            }
+            put("levels", levelsObj)
+            val systemObj = JSONObject().apply {
+                put("statsOutboundUplink", true)
+                put("statsOutboundDownlink", true)
+            }
+            put("system", systemObj)
+        }
+        root.put("policy", policyObj)
+
+        // 3. DNS
         val dnsObj = JSONObject()
         val serversArr = JSONArray()
-        serversArr.put("https+local://$dnsServer/dns-query")
+        if (dnsServer.isNotBlank()) {
+            serversArr.put(dnsServer)
+        }
         serversArr.put("1.1.1.1")
         serversArr.put("8.8.8.8")
         serversArr.put("localhost")
         dnsObj.put("servers", serversArr)
         root.put("dns", dnsObj)
 
-        // 3. Inbounds (Socks5 & HTTP)
+        // 4. Inbounds (TUN, Socks5 & HTTP)
         val inboundsArr = JSONArray()
 
+        if (tunFd > 0) {
+            val tunInbound = JSONObject().apply {
+                put("tag", "tun")
+                put("protocol", "tun")
+                put("settings", JSONObject().apply {
+                    put("name", "xray0")
+                    put("MTU", 1500)
+                    put("userLevel", 8)
+                })
+                put("sniffing", JSONObject().apply {
+                    put("enabled", true)
+                    put("destOverride", JSONArray().apply {
+                        put("http")
+                        put("tls")
+                        put("quic")
+                    })
+                })
+            }
+            inboundsArr.put(tunInbound)
+        }
+
         val socksInbound = JSONObject().apply {
-            put("tag", "socks-in")
+            put("tag", "socks")
             put("port", socksPort)
             put("listen", "127.0.0.1")
             put("protocol", "socks")
             put("settings", JSONObject().apply {
                 put("auth", "noauth")
                 put("udp", true)
+                put("userLevel", 8)
             })
             put("sniffing", JSONObject().apply {
                 put("enabled", true)
                 put("destOverride", JSONArray().apply {
                     put("http")
                     put("tls")
+                    put("quic")
                 })
             })
         }
         inboundsArr.put(socksInbound)
 
         val httpInbound = JSONObject().apply {
-            put("tag", "http-in")
+            put("tag", "http")
             put("port", httpPort)
             put("listen", "127.0.0.1")
             put("protocol", "http")
@@ -105,7 +154,11 @@ object XrayConfigBuilder {
         val directOutbound = JSONObject().apply {
             put("tag", "direct")
             put("protocol", "freedom")
-            put("settings", JSONObject())
+            put("streamSettings", JSONObject().apply {
+                put("sockopt", JSONObject().apply {
+                    put("domainStrategy", "UseIP")
+                })
+            })
         }
         outboundsArr.put(directOutbound)
 
@@ -121,15 +174,8 @@ object XrayConfigBuilder {
 
         // 5. Routing
         val routingObj = JSONObject().apply {
-            put("domainStrategy", "IPIfNonMatch")
+            put("domainStrategy", "AsIs")
             val rulesArr = JSONArray()
-
-            // Block ads
-            rulesArr.put(JSONObject().apply {
-                put("type", "field")
-                put("outboundTag", "block")
-                put("domain", JSONArray().apply { put("geosite:category-ads-all") })
-            })
 
             // Bypass Iran if enabled
             if (bypassIran) {
@@ -143,7 +189,7 @@ object XrayConfigBuilder {
                     put("outboundTag", "direct")
                     put("domain", JSONArray().apply {
                         put("regexp:.*\\.ir$")
-                        put("geosite:ir")
+                        put("domain:ir")
                     })
                 })
             }
@@ -168,6 +214,27 @@ object XrayConfigBuilder {
 
         return root.toString(2)
     }
+
+    fun buildDelayTestConfig(server: XrayServerConfig): String {
+        val root = JSONObject()
+        val logObj = JSONObject().apply { put("loglevel", "none") }
+        root.put("log", logObj)
+
+        val outboundsArr = JSONArray()
+        val proxyOutbound = JSONObject().apply { put("tag", "proxy") }
+        when (server.protocol.uppercase()) {
+            "VLESS" -> buildVlessOutbound(proxyOutbound, server)
+            "VMESS" -> buildVmessOutbound(proxyOutbound, server)
+            "TROJAN" -> buildTrojanOutbound(proxyOutbound, server)
+            "SHADOWSOCKS" -> buildShadowsocksOutbound(proxyOutbound, server)
+            else -> buildVlessOutbound(proxyOutbound, server)
+        }
+        proxyOutbound.put("streamSettings", buildStreamSettings(server))
+        outboundsArr.put(proxyOutbound)
+        root.put("outbounds", outboundsArr)
+        return root.toString()
+    }
+
 
     private fun buildVlessOutbound(json: JSONObject, server: XrayServerConfig) {
         json.put("protocol", "vless")
@@ -266,8 +333,13 @@ object XrayConfigBuilder {
                 stream.put("security", "tls")
                 val tlsSettings = JSONObject().apply {
                     put("allowInsecure", false)
-                    put("serverName", server.serverName ?: server.address)
+                    put("serverName", server.serverName ?: server.host ?: server.address)
                     put("fingerprint", server.fingerprint ?: "chrome")
+                    val alpnArr = JSONArray().apply {
+                        put("http/1.1")
+                        put("h2")
+                    }
+                    put("alpn", alpnArr)
                 }
                 stream.put("tlsSettings", tlsSettings)
             }
@@ -281,12 +353,34 @@ object XrayConfigBuilder {
                 val wsSettings = JSONObject().apply {
                     put("path", server.path ?: "/")
                     val headers = JSONObject()
-                    if (!server.host.isNullOrBlank()) {
-                        headers.put("Host", server.host)
+                    val hostVal = server.host ?: server.serverName ?: server.address
+                    if (hostVal.isNotBlank()) {
+                        headers.put("Host", hostVal)
                     }
                     put("headers", headers)
                 }
                 stream.put("wsSettings", wsSettings)
+            }
+            "httpupgrade" -> {
+                val huSettings = JSONObject().apply {
+                    put("path", server.path ?: "/")
+                    val hostVal = server.host ?: server.serverName ?: server.address
+                    if (hostVal.isNotBlank()) {
+                        put("host", hostVal)
+                    }
+                }
+                stream.put("httpupgradeSettings", huSettings)
+            }
+            "xhttp", "splithttp" -> {
+                val xhttpSettings = JSONObject().apply {
+                    put("path", server.path ?: "/")
+                    val hostVal = server.host ?: server.serverName ?: server.address
+                    if (hostVal.isNotBlank()) {
+                        put("host", hostVal)
+                    }
+                    put("mode", "auto")
+                }
+                stream.put("xhttpSettings", xhttpSettings)
             }
             "grpc" -> {
                 val grpcSettings = JSONObject().apply {
@@ -294,6 +388,14 @@ object XrayConfigBuilder {
                     put("multiMode", true)
                 }
                 stream.put("grpcSettings", grpcSettings)
+            }
+            "tcp" -> {
+                val tcpSettings = JSONObject().apply {
+                    put("header", JSONObject().apply {
+                        put("type", "none")
+                    })
+                }
+                stream.put("tcpSettings", tcpSettings)
             }
         }
 

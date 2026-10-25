@@ -27,20 +27,22 @@ class EngineSelector @Inject constructor(
 ) {
 
     fun selectEngine(server: Server, userPreferredCore: VpnCore): VpnEngine {
+        val selected = when (userPreferredCore) {
+            VpnCore.XRAY -> xrayEngine
+            VpnCore.SINGBOX -> if (singBoxEngine.isLibraryLoaded()) singBoxEngine else xrayEngine
+            VpnCore.CLASH -> if (clashEngine.isLibraryLoaded()) clashEngine else xrayEngine
+            VpnCore.V2RAY -> if (v2RayEngine.isLibraryLoaded()) v2RayEngine else xrayEngine
+        }
+
         if (server.protocol == ServerProtocol.HYSTERIA2 ||
             server.protocol == ServerProtocol.TUIC ||
             server.protocol == ServerProtocol.WIREGUARD ||
             server.protocol == ServerProtocol.SSH
         ) {
-            return singBoxEngine
+            return if (singBoxEngine.isLibraryLoaded()) singBoxEngine else selected
         }
 
-        return when (userPreferredCore) {
-            VpnCore.XRAY -> xrayEngine
-            VpnCore.SINGBOX -> singBoxEngine
-            VpnCore.CLASH -> clashEngine
-            VpnCore.V2RAY -> v2RayEngine
-        }
+        return selected
     }
 
     fun buildConfig(server: Server, engine: VpnEngine, tunConfig: TunConfig?, bypassIran: Boolean = true): String {
@@ -109,12 +111,16 @@ class EngineSelector @Inject constructor(
                     spiderX = server.spiderX,
                     fingerprint = server.fingerprint,
                     path = server.path,
-                    host = server.hostHeader,
+                    host = server.hostHeader ?: server.serverName,
                     serviceName = server.serviceName,
                     method = server.method,
                     password = server.password
                 )
-                XrayConfigBuilder.buildConfig(cfg, bypassIran = bypassIran)
+                XrayConfigBuilder.buildConfig(
+                    server = cfg,
+                    tunFd = tunConfig?.fd ?: -1,
+                    bypassIran = bypassIran
+                )
             }
             else -> ""
         }

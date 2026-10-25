@@ -149,8 +149,8 @@ fun LatencyIndicator(
     onPing: () -> Unit
 ) {
     val (color, text) = when {
-        latency == -1L -> Pair(Color(0xFF6B82A6), "تست")
-        latency == -2L -> Pair(LinoErrorRed, "خطا")
+        latency == 0L -> Pair(Color(0xFF6B82A6), "تست")
+        latency < 0 -> Pair(LinoErrorRed, "TimeOut")
         latency < 150 -> Pair(LinoConnectedGreen, "${latency}ms")
         latency < 350 -> Pair(LinoConnectingYellow, "${latency}ms")
         else -> Pair(LinoErrorRed, "${latency}ms")

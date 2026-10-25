@@ -51,4 +51,36 @@ interface SettingsRepository {
     suspend fun setHttpPort(port: Int)
     fun getThemeMode(): Flow<ir.linovpn.app.domain.model.AppThemeMode>
     suspend fun setThemeMode(mode: ir.linovpn.app.domain.model.AppThemeMode)
+    fun getAppFont(): Flow<ir.linovpn.app.domain.model.AppFont>
+    suspend fun setAppFont(font: ir.linovpn.app.domain.model.AppFont)
+    fun getAppLanguage(): Flow<ir.linovpn.app.domain.model.AppLanguage>
+    suspend fun setAppLanguage(lang: ir.linovpn.app.domain.model.AppLanguage)
+    fun getSpeedTestUrl(): Flow<String>
+    suspend fun setSpeedTestUrl(url: String)
+    fun getRoutingMode(): Flow<ir.linovpn.app.domain.model.RoutingMode>
+    suspend fun setRoutingMode(mode: ir.linovpn.app.domain.model.RoutingMode)
+    fun isRoutingEnabled(): Flow<Boolean>
+    suspend fun setRoutingEnabled(enabled: Boolean)
+    fun getPingTimeout(): Flow<Int>
+    suspend fun setPingTimeout(timeoutMs: Int)
+    fun getPingConcurrency(): Flow<Int>
+    suspend fun setPingConcurrency(count: Int)
+    fun isAutoUpdateSubscriptions(): Flow<Boolean>
+    suspend fun setAutoUpdateSubscriptions(enabled: Boolean)
+    fun isMuxEnabled(): Flow<Boolean>
+    suspend fun setMuxEnabled(enabled: Boolean)
+    fun isFragmentEnabled(): Flow<Boolean>
+    suspend fun setFragmentEnabled(enabled: Boolean)
+    fun isSniffingEnabled(): Flow<Boolean>
+    suspend fun setSniffingEnabled(enabled: Boolean)
+    fun isStrictRouteEnabled(): Flow<Boolean>
+    suspend fun setStrictRouteEnabled(enabled: Boolean)
+    fun getTunStack(): Flow<String>
+    suspend fun setTunStack(stack: String)
+    fun getMtu(): Flow<Int>
+    suspend fun setMtu(mtu: Int)
+    fun isAutoUpdateOnOpen(): Flow<Boolean>
+    suspend fun setAutoUpdateOnOpen(enabled: Boolean)
+    fun getSubscriptionUpdateInterval(): Flow<String>
+    suspend fun setSubscriptionUpdateInterval(interval: String)
 }

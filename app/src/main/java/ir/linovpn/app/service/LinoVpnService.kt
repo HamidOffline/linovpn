@@ -40,12 +40,14 @@ class LinoVpnService : VpnService() {
 
     private val serviceScope = CoroutineScope(Dispatchers.IO + Job())
     private var statsJob: Job? = null
+    private var connectJob: Job? = null
     private var tunInterface: ParcelFileDescriptor? = null
     private var activeEngine: VpnEngine? = null
     private var currentServer: Server? = null
 
     override fun onCreate() {
         super.onCreate()
+        runCatching { ir.linovpn.xray.XrayEngine.initCore(this) }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -54,7 +56,8 @@ class LinoVpnService : VpnService() {
         when (action) {
             ACTION_CONNECT -> {
                 val serverId = intent.getStringExtra(EXTRA_SERVER_ID)
-                serviceScope.launch {
+                connectJob?.cancel()
+                connectJob = serviceScope.launch {
                     val server = if (serverId != null) {
                         serverRepository.getServerById(serverId)
                     } else {
@@ -69,9 +72,13 @@ class LinoVpnService : VpnService() {
                 }
             }
             ACTION_DISCONNECT -> {
+                connectJob?.cancel()
+                connectJob = null
                 disconnectVpn()
             }
             NotificationHelper.ACTION_DISCONNECT -> {
+                connectJob?.cancel()
+                connectJob = null
                 disconnectVpn()
             }
         }
@@ -80,8 +87,26 @@ class LinoVpnService : VpnService() {
     }
 
     private suspend fun connectVpn(server: Server) {
+        // Clean up previous engine, interface, and stats polling if switching or reconnecting
+        statsJob?.cancel()
+        statsJob = null
+        try {
+            activeEngine?.stop()
+        } catch (e: Throwable) {
+            android.util.Log.w("LinoVPN", "Error stopping previous engine during reconnect", e)
+        }
+        activeEngine = null
+        try {
+            tunInterface?.close()
+        } catch (e: Throwable) {
+            android.util.Log.w("LinoVPN", "Error closing previous tunInterface during reconnect", e)
+        }
+        tunInterface = null
+        delay(150)
+
         currentServer = server
         vpnManager.updateState(VpnState.Connecting)
+        android.util.Log.i("LinoVPN", "connectVpn initiated for server: ${server.name} (${server.host}:${server.port})")
 
         val initialNotif = notificationHelper.buildNotification(
             server,
@@ -103,6 +128,13 @@ class LinoVpnService : VpnService() {
                 addDnsServer(dnsConfig.primaryDns)
                 addDnsServer(dnsConfig.secondaryDns)
 
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                    setMetered(false)
+                }
+
+                // Exclude LinoVPN itself from the VPN tunnel to prevent outbound routing loops
+                runCatching { addDisallowedApplication(packageName) }
+
                 if (splitTunneling && bypassApps.isNotEmpty()) {
                     vpnManager.log("اسپلیت تونلینگ فعال شد (${bypassApps.size} برنامه مستثنی شدند)")
                     for (pkg in bypassApps) {
@@ -112,21 +144,31 @@ class LinoVpnService : VpnService() {
             }
 
             tunInterface = builder.establish()
-            val tunFd = tunInterface?.fd ?: -1
-            vpnManager.log("رابط تونل TUN ایجاد شد (FD: $tunFd)")
+            if (tunInterface == null) {
+                val errMsg = "ایجاد رابط TUN با شکست مواجه شد (احتمالاً مجوز VPN صادر نشده است)"
+                android.util.Log.e("LinoVPN", errMsg)
+                vpnManager.updateState(VpnState.Error(errMsg))
+                stopForeground(STOP_FOREGROUND_REMOVE)
+                stopSelf()
+                return
+            }
 
-            val tunConfig = if (tunFd > 0) {
-                TunConfig(fd = tunFd, dnsV4 = dnsConfig.primaryDns)
-            } else null
+            val tunFd = tunInterface!!.fd
+            vpnManager.log("رابط تونل TUN ایجاد شد (FD: $tunFd)")
+            android.util.Log.i("LinoVPN", "TUN established with FD: $tunFd")
+
+            val tunConfig = TunConfig(fd = tunFd, dnsV4 = dnsConfig.primaryDns)
 
             val engine = engineSelector.selectEngine(server, preferredCore)
             activeEngine = engine
             vpnManager.log("هسته انتخابی: ${engine.name} | پروتکل: ${server.protocol.name}")
+            android.util.Log.i("LinoVPN", "Selected engine: ${engine.name}")
 
             val configContent = engineSelector.buildConfig(server, engine, tunConfig, dnsConfig.bypassIran)
 
             val result = engine.start(configContent, tunConfig)
             if (result is EngineResult.Success) {
+                android.util.Log.i("LinoVPN", "VPN connected successfully to ${server.name}")
                 val connectedState = VpnState.Connected(
                     server = server,
                     connectedAt = System.currentTimeMillis()
@@ -134,12 +176,26 @@ class LinoVpnService : VpnService() {
                 vpnManager.updateState(connectedState)
                 startStatsPolling(server)
             } else if (result is EngineResult.Failure) {
+                android.util.Log.e("LinoVPN", "Engine start failure: ${result.error}", result.throwable)
                 vpnManager.updateState(VpnState.Error(result.error))
-                disconnectVpn()
+                activeEngine?.stop()
+                activeEngine = null
+                runCatching { tunInterface?.close() }
+                tunInterface = null
+                currentServer = null
+                stopForeground(STOP_FOREGROUND_REMOVE)
+                stopSelf()
             }
         } catch (e: Throwable) {
+            android.util.Log.e("LinoVPN", "connectVpn exception: ${e.message}", e)
             vpnManager.updateState(VpnState.Error(e.message ?: "VPN establishment failed"))
-            disconnectVpn()
+            activeEngine?.stop()
+            activeEngine = null
+            runCatching { tunInterface?.close() }
+            tunInterface = null
+            currentServer = null
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
         }
     }
 

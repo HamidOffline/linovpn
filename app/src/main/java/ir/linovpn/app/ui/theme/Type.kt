@@ -21,47 +21,69 @@ val YekanFontFamily = FontFamily(
     Font(R.font.yekan, FontWeight.Bold)
 )
 
-val Typography = Typography(
-    headlineLarge = TextStyle(
-        fontFamily = VazirmatnFontFamily,
-        fontWeight = FontWeight.Bold,
-        fontSize = 28.sp,
-        lineHeight = 34.sp
-    ),
-    headlineMedium = TextStyle(
-        fontFamily = VazirmatnFontFamily,
-        fontWeight = FontWeight.Bold,
-        fontSize = 22.sp,
-        lineHeight = 28.sp
-    ),
-    titleLarge = TextStyle(
-        fontFamily = VazirmatnFontFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 18.sp,
-        lineHeight = 24.sp
-    ),
-    titleMedium = TextStyle(
-        fontFamily = VazirmatnFontFamily,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
-        lineHeight = 22.sp
-    ),
-    bodyLarge = TextStyle(
-        fontFamily = VazirmatnFontFamily,
-        fontWeight = FontWeight.Normal,
-        fontSize = 15.sp,
-        lineHeight = 20.sp
-    ),
-    bodyMedium = TextStyle(
-        fontFamily = VazirmatnFontFamily,
-        fontWeight = FontWeight.Normal,
-        fontSize = 13.sp,
-        lineHeight = 18.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = VazirmatnFontFamily,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 14.sp
+val Typography = getAppTypography(ir.linovpn.app.domain.model.AppFont.VAZIRMATN)
+
+fun getAppTypography(font: ir.linovpn.app.domain.model.AppFont): Typography {
+    val family = when (font) {
+        ir.linovpn.app.domain.model.AppFont.VAZIRMATN -> VazirmatnFontFamily
+        ir.linovpn.app.domain.model.AppFont.YEKAN -> YekanFontFamily
+        ir.linovpn.app.domain.model.AppFont.SYSTEM -> FontFamily.Default
+    }
+    return Typography(
+        headlineLarge = TextStyle(
+            fontFamily = family,
+            fontWeight = FontWeight.Bold,
+            fontSize = 28.sp,
+            lineHeight = 34.sp
+        ),
+        headlineMedium = TextStyle(
+            fontFamily = family,
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp,
+            lineHeight = 28.sp
+        ),
+        titleLarge = TextStyle(
+            fontFamily = family,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            lineHeight = 24.sp
+        ),
+        titleMedium = TextStyle(
+            fontFamily = family,
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp,
+            lineHeight = 22.sp
+        ),
+        bodyLarge = TextStyle(
+            fontFamily = family,
+            fontWeight = FontWeight.Normal,
+            fontSize = 15.sp,
+            lineHeight = 20.sp
+        ),
+        bodyMedium = TextStyle(
+            fontFamily = family,
+            fontWeight = FontWeight.Normal,
+            fontSize = 13.5.sp,
+            lineHeight = 19.sp
+        ),
+        labelLarge = TextStyle(
+            fontFamily = family,
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.sp,
+            lineHeight = 20.sp
+        ),
+        labelMedium = TextStyle(
+            fontFamily = family,
+            fontWeight = FontWeight.Medium,
+            fontSize = 12.sp,
+            lineHeight = 16.sp
+        ),
+        labelSmall = TextStyle(
+            fontFamily = family,
+            fontWeight = FontWeight.Medium,
+            fontSize = 11.sp,
+            lineHeight = 14.sp
+        )
     )
-)
+}
+
