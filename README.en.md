@@ -17,11 +17,11 @@
     <a href="https://github.com/HamidOffline/linovpn/releases/latest">
       <img src="https://img.shields.io/github/v/release/HamidOffline/linovpn?label=Latest%20Release&color=0084FF&style=for-the-badge" alt="Latest Release">
     </a>
-    <a href="https://t.me/MojAzadNet">
-      <img src="https://img.shields.io/badge/Telegram%20Channel-%40MojAzadNet-00B4E6?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram Channel">
+    <a href="https://t.me/LinoVPN">
+      <img src="https://img.shields.io/badge/Telegram%20Channel-%40LinoVPN-00B4E6?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram Channel">
     </a>
-    <a href="https://t.me/linovpnsup">
-      <img src="https://img.shields.io/badge/Support-%40linovpnsup-00A878?style=for-the-badge&logo=telegram&logoColor=white" alt="Support">
+    <a href="https://t.me/LinoVPNSup">
+      <img src="https://img.shields.io/badge/Support-%40LinoVPNSup-00A878?style=for-the-badge&logo=telegram&logoColor=white" alt="Support">
     </a>
   </p>
 </div>
@@ -80,27 +80,7 @@
 
 ---
 
-## 🛠️ Building from Source
-
-- Requirements: **JDK 17+** and **Android SDK (API 37)**.
-- Create `keystore.properties` in the project root (or supply `LINO_KEYSTORE_PATH`, `LINO_KEYSTORE_PASSWORD`, `LINO_KEY_ALIAS`, `LINO_KEY_PASSWORD` environment variables):
-
-```properties
-storeFile=/path/to/linovpn-release.jks
-storePassword=YOUR_STORE_PASSWORD
-keyAlias=linovpn_release
-keyPassword=YOUR_KEY_PASSWORD
-```
-
-Build all three release variants (`arm64-v8a`, `armeabi-v7a`, and `universal`) together:
-
-```bash
-./gradlew assemblePlaystoreRelease
-```
-
----
-
 ## 📞 Community & Support
-- **Official Telegram Channel:** [@MojAzadNet](https://t.me/MojAzadNet)
-- **Customer Support:** [@linovpnsup](https://t.me/linovpnsup)
+- **Official Telegram Channel:** [@LinoVPN](https://t.me/LinoVPN)
+- **Customer Support:** [@LinoVPNSup](https://t.me/LinoVPNSup)
 - **Bug Reports & Feature Requests:** [GitHub Issues](https://github.com/HamidOffline/linovpn/issues)

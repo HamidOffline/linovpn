@@ -158,15 +158,15 @@ object AppConfig {
     const val AETHER_URL = "$GITHUB_URL/CluvexStudio/aether"
     const val APP_WIKI_MODE = "$APP_URL/wiki"
     const val APP_PRIVACY_POLICY = "$APP_URL"
-    const val APP_PROMOTION_URL = "https://t.me/MojAzadNet"
-    const val TG_CHANNEL_URL = "https://t.me/MojAzadNet"
-    const val SUPPORT_TELEGRAM_URL = "https://t.me/linovpnsup"
+    const val APP_PROMOTION_URL = "https://t.me/LinoVPN"
+    const val TG_CHANNEL_URL = "https://t.me/LinoVPN"
+    const val SUPPORT_TELEGRAM_URL = "https://t.me/LinoVPNSup"
 
     /** Donation wallets placeholder (unused in LinoVPN). */
     val DONATION_WALLETS = emptyList<Pair<String, String>>()
 
-    const val AUTHOR_ID = "@MojAzadNet"
-    const val AUTHOR_TELEGRAM_URL = "https://t.me/MojAzadNet"
+    const val AUTHOR_ID = "@LinoVPN"
+    const val AUTHOR_TELEGRAM_URL = "https://t.me/LinoVPN"
 
     const val DELAY_TEST_URL = "https://www.gstatic.com/generate_204"
     const val DELAY_TEST_URL2 = "https://www.google.com/generate_204"

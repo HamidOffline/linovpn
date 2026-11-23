@@ -67,7 +67,7 @@ object LinoSettingsStore {
     private val slipKv: MMKV by lazy { MMKV.mmkvWithID("lino_slipnet_prefs", MMKV.MULTI_PROCESS_MODE) }
     private val appKv: MMKV by lazy { MMKV.mmkvWithID("lino_app_prefs", MMKV.MULTI_PROCESS_MODE) }
 
-    // -------- App / MojAzad Smart Behavior --------
+    // -------- App / LinoVPN Smart Behavior --------
     var onboardingCompleted: Boolean
         get() = appKv.decodeBool("onboarding_done", false)
         set(v) { appKv.encode("onboarding_done", v) }

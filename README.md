@@ -17,11 +17,11 @@
     <a href="https://github.com/HamidOffline/linovpn/releases/latest">
       <img src="https://img.shields.io/github/v/release/HamidOffline/linovpn?label=%D8%A2%D8%AE%D8%B1%DB%8C%D9%86%20%D9%86%D8%B3%D8%AE%D9%87&color=0084FF&style=for-the-badge" alt="Latest Release">
     </a>
-    <a href="https://t.me/MojAzadNet">
-      <img src="https://img.shields.io/badge/%DA%A9%D8%A7%D9%86%D8%A7%D9%84%20%D8%AA%D9%84%DA%AF%D8%B1%D8%A7%D9%85-%40MojAzadNet-00B4E6?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram Channel">
+    <a href="https://t.me/LinoVPN">
+      <img src="https://img.shields.io/badge/%DA%A9%D8%A7%D9%86%D8%A7%D9%84%20%D8%AA%D9%84%DA%AF%D8%B1%D8%A7%D9%85-%40LinoVPN-00B4E6?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram Channel">
     </a>
-    <a href="https://t.me/linovpnsup">
-      <img src="https://img.shields.io/badge/%D9%BE%D8%B4%D8%AA%DB%8C%D8%A8%D8%A7%D9%86%DB%8C-%40linovpnsup-00A878?style=for-the-badge&logo=telegram&logoColor=white" alt="Support">
+    <a href="https://t.me/LinoVPNSup">
+      <img src="https://img.shields.io/badge/%D9%BE%D8%B4%D8%AA%DB%8C%D8%A8%D8%A7%D9%86%DB%8C-%40LinoVPNSup-00A878?style=for-the-badge&logo=telegram&logoColor=white" alt="Support">
     </a>
   </p>
 </div>
@@ -80,13 +80,11 @@
 - پشتیبانی بومی از رمزگشایی لینک‌های رمزنگاری‌شده **`slipnet-enc://`** علاوه بر `slipnet://`.
 - **اسکنر اختصاصی DNS داخلی:** اسکن چندرشته‌ای از میان ۲۳۰۷ ریزالور ایران، رنج‌های CIDR سبک و کامل ایران یا لیست دلخواه شما، تشخیص ریزالورهای سالم و پشتیبانی از EDNS0، و **اعمال یک‌کلیکی بهترین ریزالورها روی Unbar یا SlipNet**.
 
-
-
 ---
 
 ## 📞 ارتباط و پشتیبانی
-- **کانال رسمی تلگرام:** [@MojAzadNet](https://t.me/MojAzadNet)
-- **پشتیبانی آنلاین:** [@linovpnsup](https://t.me/linovpnsup)
+- **کانال رسمی تلگرام:** [@LinoVPN](https://t.me/LinoVPN)
+- **پشتیبانی آنلاین:** [@LinoVPNSup](https://t.me/LinoVPNSup)
 - **گزارش مشکل و پیشنهادها:** [GitHub Issues](https://github.com/HamidOffline/linovpn/issues)
 
-
+</div>
