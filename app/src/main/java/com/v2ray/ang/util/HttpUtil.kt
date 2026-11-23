@@ -157,7 +157,7 @@ object HttpUtil {
             if (currentUrl == null) continue
             val client = buildOkHttpClient(request.timeout, request.httpPort, request.proxyUsername, request.proxyPassword, followRedirects = false)
             val finalUserAgent = if (request.userAgent.isNullOrBlank()) {
-                "LinoVPN/${BuildConfig.VERSION_NAME} (Android; PattNG+Unbar+SlipNet)"
+                "LinoVPN/${BuildConfig.VERSION_NAME} (Android; Xray+Unbar+SlipNet)"
             } else {
                 request.userAgent
             }
