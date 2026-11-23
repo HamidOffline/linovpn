@@ -80,24 +80,6 @@
 - پشتیبانی بومی از رمزگشایی لینک‌های رمزنگاری‌شده **`slipnet-enc://`** علاوه بر `slipnet://`.
 - **اسکنر اختصاصی DNS داخلی:** اسکن چندرشته‌ای از میان ۲۳۰۷ ریزالور ایران، رنج‌های CIDR سبک و کامل ایران یا لیست دلخواه شما، تشخیص ریزالورهای سالم و پشتیبانی از EDNS0، و **اعمال یک‌کلیکی بهترین ریزالورها روی Unbar یا SlipNet**.
 
----
-
-## 🛠️ بیلد از سورس (برای توسعه‌دهندگان)
-
-- نیازمندی‌ها: **JDK 17+** و **Android SDK (API 37)**.
-- برای امضای رسمی نسخه انتشار، فایل `keystore.properties` را در ریشه پروژه بسازید (یا از متغیرهای محیطی `LINO_KEYSTORE_PATH`، `LINO_KEYSTORE_PASSWORD`، `LINO_KEY_ALIAS` و `LINO_KEY_PASSWORD` استفاده کنید):
-
-```properties
-storeFile=/path/to/linovpn-release.jks
-storePassword=YOUR_STORE_PASSWORD
-keyAlias=linovpn_release
-keyPassword=YOUR_KEY_PASSWORD
-```
-
-سپس هر سه نسخه (`arm64-v8a`، `armeabi-v7a` و `universal`) را هم‌زمان بیلد کنید:
-
-```bash
-./gradlew assemblePlaystoreRelease
 ```
 
 ---
