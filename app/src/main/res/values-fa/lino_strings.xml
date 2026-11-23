@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lino_version_badge">نسخه %1$s</string>
+    <string name="lino_smart_connect">پینگ هوشمند و اتصال به بهترین سرور</string>
+    <string name="lino_smart_pinging">در حال تست پینگ سرورها برای اتصال به سریع‌ترین سرور…</string>
+    <string name="lino_no_servers_to_test">سروری موجود نیست؛ ابتدا لینک اشتراک یا کانفیگ وارد کنید.</string>
+    <string name="lino_sub_added_auto_ping">با موفقیت اضافه شد؛ در حال انتخاب سریع‌ترین سرور…</string>
+
+    <!-- Onboarding -->
+    <string name="lino_onboarding_title">خوش آمدید</string>
+    <string name="lino_onboarding_subtitle">لینک اشتراک یا کانفیگ خود را وارد کنید تا به‌صورت خودکار پینگ گرفته و به سریع‌ترین سرور متصل شود.</string>
+    <string name="lino_onboarding_input_label">لینک اشتراک یا کانفیگ</string>
+    <string name="lino_onboarding_input_hint">نشانی لینک اشتراک یا کانفیگ مستقیم را وارد کنید</string>
+    <string name="lino_onboarding_empty_error">لطفاً لینک اشتراک یا کانفیگ را وارد کنید</string>
+    <string name="lino_onboarding_activate">فعال‌سازی و اتصال هوشمند</string>
+    <string name="lino_paste_clipboard">جای‌گذاری از حافظه کلیپ‌بورد</string>
+    <string name="lino_skip">رد شدن</string>
+
+    <!-- Live Speed & Session Volume Units -->
+    <string name="lino_speed_bps">%1$d بایت/ثانیه</string>
+    <string name="lino_speed_kbps">%1$s کیلوبایت/ثانیه</string>
+    <string name="lino_speed_mbps">%1$s مگابایت/ثانیه</string>
+    <string name="lino_speed_short_bps">%1$d ب/ث</string>
+    <string name="lino_speed_short_kbps">%1$s ک/ث</string>
+    <string name="lino_speed_short_mbps">%1$s م/ث</string>
+    <string name="lino_vol_b">%1$d بایت</string>
+    <string name="lino_vol_kb">%1$s کیلوبایت</string>
+    <string name="lino_vol_mb">%1$s مگابایت</string>
+    <string name="lino_vol_gb">%1$s گیگابایت</string>
+    <string name="lino_ms_format">%1$d میلی‌ثانیه</string>
+
+    <!-- Main UI Actions & About -->
+    <string name="lino_toggle_theme">تغییر حالت روز و شب</string>
+    <string name="lino_sub_ping_action">پینگ سرورهای اشتراک</string>
+    <string name="lino_about_tagline">سریع، هوشمند و مقاوم در برابر محدودیت‌ها</string>
+    <string name="lino_about_channel">کانال رسمی تلگرام</string>
+    <string name="lino_about_channel_sub">اخبار، اطلاع‌رسانی و نسخه‌های جدید</string>
+    <string name="lino_about_support">پشتیبانی آنلاین</string>
+    <string name="lino_about_support_sub">ارتباط مستقیم با پشتیبانی در تلگرام</string>
+    <string name="lino_about_update">بررسی و نصب نسخه جدید</string>
+    <string name="lino_about_update_sub">دریافت و نصب مستقیم آخرین نسخه برنامه</string>
+    <string name="lino_about_github">صفحه انتشار نسخه‌ها</string>
+    <string name="lino_about_github_sub">مشاهده تغییرات و فایل‌های نصبی رسمی</string>
+    <string name="lino_update_downloading">در حال دریافت نسخه جدید… %1$d٪</string>
+    <string name="lino_update_installing">در حال باز کردن نصاب برنامه…</string>
+    <string name="lino_update_download_failed">خطا در دریافت مستقیم؛ باز کردن در مرورگر</string>
+    <string name="lino_update_channel_name">به‌روزرسانی‌های برنامه</string>
+    <string name="lino_update_notif_title">نسخه جدید (%1$s) منتشر شد</string>
+    <string name="lino_update_notif_body">نسخه جدید برنامه آماده است؛ برای دریافت و نصب مستقیم ضربه بزنید.</string>
+    <string name="lino_update_banner_title">نسخه جدید %1$s آماده نصب است</string>
+    <string name="lino_update_banner_action">به‌روزرسانی</string>
+    <string name="lino_dismiss">بعداً</string>
+
+    <!-- Common -->
+    <string name="lino_save">ذخیره</string>
+    <string name="lino_cancel">انصراف</string>
+    <string name="lino_auto">خودکار</string>
+    <string name="lino_unlimited">نامحدود</string>
+    <string name="lino_server_added_ok">سرور با موفقیت اضافه شد</string>
+    <string name="lino_open_dns_scanner">اسکنر دی‌ان‌اس</string>
+    <string name="lino_local_port">درگاه محلی ساکس ۵</string>
+    <string name="lino_proxy_username">نام کاربری پروکسی</string>
+    <string name="lino_proxy_password">گذرواژه پروکسی</string>
+    <string name="lino_custom_resolvers_label">فهرست ریزالورهای دلخواه (جداشده با ویرگول)</string>
+    <string name="lino_custom_resolvers_hint">نشانی‌ها را با ویرگول جدا کنید</string>
+    <string name="lino_download_limit">محدودیت دانلود (کیلوبایت/ثانیه)</string>
+    <string name="lino_upload_limit">محدودیت آپلود (کیلوبایت/ثانیه)</string>
+
+    <!-- Unbar Settings -->
+    <string name="lino_unbar_settings_title">تنظیمات آنبار</string>
+    <string name="lino_unbar_add_server">افزودن سرور آنبار</string>
+    <string name="lino_unbar_sec_connection">حالت اتصال</string>
+    <string name="lino_mode_vpn">حالت فیلترشکن کامل</string>
+    <string name="lino_mode_socks">فقط پروکسی ساکس ۵</string>
+    <string name="lino_unbar_sec_resolvers">ریزالورها و بستر انتقال دی‌ان‌اس</string>
+    <string name="lino_unbar_res_builtin">جستجوی خودکار داخلی (۲۳۰۷ سرور ایران)</string>
+    <string name="lino_unbar_res_custom">ریزالورهای دلخواه</string>
+    <string name="lino_unbar_tcp_mode">حالت انتقال تی‌سی‌پی پورت ۵۳</string>
+    <string name="lino_unbar_tcp_mode_desc">استفاده از تی‌سی‌پی در زمان مسدودی بسته‌های یودی‌پی</string>
+    <string name="lino_unbar_sec_tuning">تنظیمات اندازه بسته‌های تونل</string>
+    <string name="lino_unbar_mtu_label">بیشینه اندازه بسته تونل</string>
+    <string name="lino_unbar_max_answer_label">بیشینه اندازه پاسخ دی‌ان‌اس (بایت)</string>
+    <string name="lino_unbar_sec_bandwidth">محدودیت پهنای باند</string>
+    <string name="lino_unbar_sec_routing">مسیریابی و عبور مستقیم داخلی</string>
+    <string name="lino_unbar_geo_bypass">عبور مستقیم سایت‌های ایرانی</string>
+    <string name="lino_unbar_geo_bypass_desc">سایت‌ها و نشانی‌های داخلی ایران بدون تونل باز می‌شوند</string>
+    <string name="lino_unbar_bypass_domains">دامنه‌های مستثنی دلخواه (جداشده با ویرگول)</string>
+    <string name="lino_unbar_sec_proxy_diag">پروکسی محلی و گزارش‌های فنی</string>
+    <string name="lino_unbar_notif_speed">نمایش سرعت لحظه‌ای در اعلان</string>
+    <string name="lino_unbar_diag_logs">ثبت گزارش‌های عیب‌یابی</string>
+    <string name="lino_unbar_uri_or_name">لینک آنبار یا نام نمایشی سرور</string>
+    <string name="lino_unbar_zone_label">دامنه زون تونل</string>
+    <string name="lino_unbar_pubkey_label">کلید عمومی سرور</string>
+
+    <!-- SlipNet Settings -->
+    <string name="lino_slipnet_settings_title">تنظیمات اسلیپ‌نت</string>
+    <string name="lino_slipnet_add_server">افزودن سرور اسلیپ‌نت</string>
+    <string name="lino_slipnet_uri_or_name">لینک اسلیپ‌نت (عادی یا رمزنگاری‌شده) یا نام سرور</string>
+    <string name="lino_slip_domain_label">دامنه تونل یا نشانی سرور</string>
+    <string name="lino_slip_sec_tunnel">پروتکل پیش‌فرض و بستر انتقال</string>
+    <string name="lino_proto_dnstt">تونل دی‌ان‌اس استاندارد</string>
+    <string name="lino_proto_noizdns">تونل ضدشناسایی نویز</string>
+    <string name="lino_proto_vaydns">تونل بهینه وی‌دی‌ان‌اس</string>
+    <string name="lino_proto_soar">تونل سوار چندریزالوری</string>
+    <string name="lino_proto_slipstream">اسلیپ‌استریم پرسرعت</string>
+    <string name="lino_proto_naive">پروکسی نایو اچ‌تی‌تی‌پی‌اس</string>
+    <string name="lino_proto_ssh">تونل اس‌اس‌اچ</string>
+    <string name="lino_proto_tor">شبکه تور</string>
+    <string name="lino_proto_doh">دی‌ان‌اس امن وب</string>
+    <string name="lino_slip_dns_transport">روش ارسال دی‌ان‌اس</string>
+    <string name="lino_trans_udp">یودی‌پی</string>
+    <string name="lino_trans_tcp">تی‌سی‌پی</string>
+    <string name="lino_trans_dot">دی‌ان‌اس روی تی‌ال‌اس</string>
+    <string name="lino_trans_doh">دی‌ان‌اس روی وب</string>
+    <string name="lino_slip_doh_url">نشانی سرور دی‌ان‌اس امن وب</string>
+    <string name="lino_slip_sec_resolvers">راهبرد چندریزالوری</string>
+    <string name="lino_res_mode_fanout">ارسال همزمان به همه</string>
+    <string name="lino_res_mode_rr">چرخشی</string>
+    <string name="lino_res_mode_fastest">سریع‌ترین</string>
+    <string name="lino_slip_rr_spread">تعداد پخش همزمان</string>
+    <string name="lino_slip_max_payload">بیشینه اندازه بسته داده</string>
+    <string name="lino_slip_sec_dnstt_noiz">تنظیمات تونل دی‌ان‌اس و ضدشناسایی</string>
+    <string name="lino_slip_auth_mode">حالت پاسخ‌گوی مستقیم</string>
+    <string name="lino_slip_auth_mode_desc">ارسال مستقیم درخواست به سرور تونل</string>
+    <string name="lino_slip_stealth_mode">حالت مخفی‌کاری پیشرفته</string>
+    <string name="lino_slip_stealth_mode_desc">مقاومت بیشتر در برابر فیلترینگ هوشمند</string>
+    <string name="lino_slip_sec_vaydns">تنظیمات پیشرفته وی‌دی‌ان‌اس</string>
+    <string name="lino_slip_vay_record">نوع رکورد دی‌ان‌اس</string>
+    <string name="lino_slip_vay_compat">حالت سازگاری با دی‌ان‌اس استاندارد</string>
+    <string name="lino_slip_vay_qname">بیشینه طول نام درخواست</string>
+    <string name="lino_slip_vay_rps">محدودیت درخواست در ثانیه</string>
+    <string name="lino_slip_keepalive">فاصله نگه‌دارنده اتصال (ثانیه)</string>
+    <string name="lino_slip_idle_timeout">مهلت بیکاری (ثانیه)</string>
+    <string name="lino_slip_sec_slipstream">تنظیمات اسلیپ‌استریم</string>
+    <string name="lino_cc_bbr">کنترل ازدحام بی‌بی‌آر</string>
+    <string name="lino_cc_dcubic">کنترل ازدحام کیوبیک</string>
+    <string name="lino_slip_gso">فعال‌سازی شتاب‌دهنده بسته‌ها</string>
+    <string name="lino_slip_sec_ssh">تنظیمات اس‌اس‌اچ و مبهم‌سازی</string>
+    <string name="lino_slip_ssh_tls">اس‌اس‌اچ روی تی‌ال‌اس</string>
+    <string name="lino_slip_ssh_sni">نام دامنه پوششی دلخواه</string>
+    <string name="lino_slip_ssh_ws">اس‌اس‌اچ روی وب‌سوکت</string>
+    <string name="lino_slip_ssh_ws_path">مسیر وب‌سوکت</string>
+    <string name="lino_slip_ssh_payload">تزریق بسته اولیه اس‌اس‌اچ</string>
+    <string name="lino_slip_sec_tor">شبکه تور و پل‌های ارتباطی</string>
+    <string name="lino_tor_snowflake">اسنوفلیک</string>
+    <string name="lino_tor_obfs4">پل مبهم‌ساز چهار</string>
+    <string name="lino_tor_meek">پل میک</string>
+    <string name="lino_tor_custom">پل‌های دلخواه</string>
+    <string name="lino_tor_direct">اتصال مستقیم تور</string>
+    <string name="lino_slip_tor_bridges">خطوط پل‌های تور</string>
+
+    <!-- DNS Scanner -->
+    <string name="lino_scanner_title">اسکنر دی‌ان‌اس اسلیپ‌نت</string>
+    <string name="lino_scanner_source">منبع اسکن ریزالورها</string>
+    <string name="lino_scan_src_unbar_ir">سرورهای تاییدشده ایران (۲۳۰۷)</string>
+    <string name="lino_scan_src_ir_lite">بازه سبک ایران</string>
+    <string name="lino_scan_src_ir_full">بازه کامل ایران</string>
+    <string name="lino_scan_src_custom">بازه یا نشانی دلخواه</string>
+    <string name="lino_scanner_custom_cidr">نشانی یا بازه شبکه (هر خط یک مورد)</string>
+    <string name="lino_scanner_threads">تعداد رشته همزمان</string>
+    <string name="lino_scanner_timeout">مهلت پاسخ (میلی‌ثانیه)</string>
+    <string name="lino_scanner_start">شروع اسکن دی‌ان‌اس</string>
+    <string name="lino_scanner_stop">توقف اسکن</string>
+    <string name="lino_scanner_progress">بررسی‌شده %1$d از %2$d</string>
+    <string name="lino_scanner_found">سالم یافت‌شده: %1$d</string>
+    <string name="lino_apply_unbar">اعمال در آنبار</string>
+    <string name="lino_apply_slipnet">اعمال در اسلیپ‌نت</string>
+    <string name="lino_copy_top_resolvers">کپی ۱۰ ریزالور برتر</string>
+    <string name="lino_scanner_applied_unbar">بهترین ریزالورهای سالم در تنظیمات آنبار ذخیره شدند</string>
+    <string name="lino_scanner_applied_slipnet">بهترین ریزالورهای سالم در تنظیمات اسلیپ‌نت ذخیره شدند</string>
+    <string name="lino_resolver_clean_edns">سالم • پشتیبانی از بسته بزرگ</string>
+    <string name="lino_resolver_clean">سالم</string>
+    <string name="lino_resolver_hijack">مشکوک به دستکاری پاسخ</string>
+</resources>

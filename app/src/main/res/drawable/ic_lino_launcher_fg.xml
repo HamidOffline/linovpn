@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Outer sleek shield frame inspired by LinoVPN gradient -->
+    <path
+        android:fillAlpha="0.14"
+        android:fillColor="#1EC8FF"
+        android:pathData="M54,18 L82,29 V54 C82,71 70,84 54,90 C38,84 26,71 26,54 V29 Z" />
+
+    <!-- Folded Ribbon 'L' vertical swoop (cyan to royal blue) -->
+    <path android:pathData="M36,28 C44,29 50,35 50,43 V64 C50,67 48,70 45,72 L36,64 V28 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="44"
+                android:endY="74"
+                android:startX="36"
+                android:startY="28"
+                android:type="linear">
+                <item android:color="#2CF0FF" android:offset="0.0" />
+                <item android:color="#008BFF" android:offset="0.55" />
+                <item android:color="#0038C7" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Folded Ribbon 'L' lower curve wave -->
+    <path android:pathData="M36,52 C36,68 44,76 58,76 H70 C72,76 74,74 74,71 V65 C74,63 72,62 69,62 H54 C48,62 45,59 45,54 L36,52 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="74"
+                android:endY="72"
+                android:startX="36"
+                android:startY="54"
+                android:type="linear">
+                <item android:color="#002CA8" android:offset="0.0" />
+                <item android:color="#007BFF" android:offset="0.55" />
+                <item android:color="#19E3FF" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Signature Lino cyan leaf/droplet accent (top right of the L) -->
+    <path android:pathData="M56,41 C56,31 64,25 74,25 C73,35 66,42 56,41 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="74"
+                android:endY="25"
+                android:startX="56"
+                android:startY="41"
+                android:type="linear">
+                <item android:color="#008BFF" android:offset="0.0" />
+                <item android:color="#39F5FF" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

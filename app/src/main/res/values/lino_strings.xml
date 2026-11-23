@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lino_version_badge">Version %1$s</string>
+    <string name="lino_smart_connect">Smart Ping &amp; Connect</string>
+    <string name="lino_smart_pinging">Testing all servers to connect to the fastest one…</string>
+    <string name="lino_no_servers_to_test">No servers available. Add a subscription or config first.</string>
+    <string name="lino_sub_added_auto_ping">Added successfully. Finding the fastest server…</string>
+
+    <!-- Onboarding -->
+    <string name="lino_onboarding_title">Welcome to LinoVPN</string>
+    <string name="lino_onboarding_subtitle">Enter your subscription link or server configuration to automatically test ping and connect to the fastest server.</string>
+    <string name="lino_onboarding_input_label">Subscription URL or Config</string>
+    <string name="lino_onboarding_input_hint">https://... or vless:// / unbar:// / slipnet://</string>
+    <string name="lino_onboarding_empty_error">Please enter a link or configuration</string>
+    <string name="lino_onboarding_activate">Activate &amp; Connect</string>
+    <string name="lino_paste_clipboard">Paste from Clipboard</string>
+    <string name="lino_skip">Skip</string>
+
+    <!-- Live Speed & Session Volume Units -->
+    <string name="lino_speed_bps">%1$d B/s</string>
+    <string name="lino_speed_kbps">%1$s KB/s</string>
+    <string name="lino_speed_mbps">%1$s MB/s</string>
+    <string name="lino_speed_short_bps">%1$d B/s</string>
+    <string name="lino_speed_short_kbps">%1$s KB/s</string>
+    <string name="lino_speed_short_mbps">%1$s MB/s</string>
+    <string name="lino_vol_b">%1$d B</string>
+    <string name="lino_vol_kb">%1$s KB</string>
+    <string name="lino_vol_mb">%1$s MB</string>
+    <string name="lino_vol_gb">%1$s GB</string>
+    <string name="lino_ms_format">%1$d ms</string>
+
+    <!-- Main UI Actions & About -->
+    <string name="lino_toggle_theme">Switch Light / Dark Mode</string>
+    <string name="lino_sub_ping_action">Test Subscription Servers</string>
+    <string name="lino_about_tagline">Fast, Smart &amp; Censorship-Resistant VPN</string>
+    <string name="lino_about_channel">Official Telegram Channel</string>
+    <string name="lino_about_channel_sub">News, updates &amp; announcements</string>
+    <string name="lino_about_support">Online Support</string>
+    <string name="lino_about_support_sub">Contact support directly on Telegram</string>
+    <string name="lino_about_update">Check for Updates</string>
+    <string name="lino_about_update_sub">Download and install the latest LinoVPN version</string>
+    <string name="lino_about_github">Releases &amp; Changelog</string>
+    <string name="lino_about_github_sub">Official LinoVPN GitHub releases</string>
+    <string name="lino_update_downloading">Downloading update… %1$d%%</string>
+    <string name="lino_update_installing">Opening installer…</string>
+    <string name="lino_update_download_failed">Direct download failed; opening in browser</string>
+    <string name="lino_update_channel_name">App Updates</string>
+    <string name="lino_update_notif_title">New LinoVPN Update (v%1$s)</string>
+    <string name="lino_update_notif_body">A new version is available. Tap to download and install directly.</string>
+    <string name="lino_update_banner_title">New version v%1$s is available</string>
+    <string name="lino_update_banner_action">Update</string>
+    <string name="lino_dismiss">Later</string>
+
+    <!-- Common -->
+    <string name="lino_save">Save</string>
+    <string name="lino_cancel">Cancel</string>
+    <string name="lino_auto">Auto</string>
+    <string name="lino_unlimited">Unlimited</string>
+    <string name="lino_server_added_ok">Server added successfully</string>
+    <string name="lino_open_dns_scanner">DNS Scanner</string>
+    <string name="lino_local_port">Local SOCKS5 Port</string>
+    <string name="lino_proxy_username">Proxy Username</string>
+    <string name="lino_proxy_password">Proxy Password</string>
+    <string name="lino_custom_resolvers_label">Custom DNS Resolvers (comma-separated)</string>
+    <string name="lino_custom_resolvers_hint">8.8.8.8:53, 1.1.1.1:53</string>
+    <string name="lino_download_limit">Download Limit (KB/s)</string>
+    <string name="lino_upload_limit">Upload Limit (KB/s)</string>
+
+    <!-- Unbar Settings -->
+    <string name="lino_unbar_settings_title">Unbar Settings</string>
+    <string name="lino_unbar_add_server">Add Unbar Server</string>
+    <string name="lino_unbar_sec_connection">Connection Mode</string>
+    <string name="lino_mode_vpn">Full VPN Mode</string>
+    <string name="lino_mode_socks">SOCKS5 Proxy Only</string>
+    <string name="lino_unbar_sec_resolvers">DNS Resolvers &amp; Transport</string>
+    <string name="lino_unbar_res_builtin">Built-in Discovery (2307 IR)</string>
+    <string name="lino_unbar_res_custom">Custom Resolvers</string>
+    <string name="lino_unbar_tcp_mode">TCP-53 Mode</string>
+    <string name="lino_unbar_tcp_mode_desc">Force DNS over TCP port 53 when UDP is blocked</string>
+    <string name="lino_unbar_sec_tuning">Tunnel Packet Tuning</string>
+    <string name="lino_unbar_mtu_label">Tunnel MTU</string>
+    <string name="lino_unbar_max_answer_label">Max DNS Answer Size (Bytes)</string>
+    <string name="lino_unbar_sec_bandwidth">Bandwidth Limits</string>
+    <string name="lino_unbar_sec_routing">Geo Bypass &amp; Direct Domains</string>
+    <string name="lino_unbar_geo_bypass">Bypass Domestic (.ir) Traffic</string>
+    <string name="lino_unbar_geo_bypass_desc">Route Iranian sites and IP ranges directly</string>
+    <string name="lino_unbar_bypass_domains">Custom Bypass Domains (comma-separated)</string>
+    <string name="lino_unbar_sec_proxy_diag">Local Proxy &amp; Diagnostics</string>
+    <string name="lino_unbar_notif_speed">Show Live Speeds in Notification</string>
+    <string name="lino_unbar_diag_logs">Enable Diagnostic Logs</string>
+    <string name="lino_unbar_uri_or_name">Unbar Link (unbar://) or Display Name</string>
+    <string name="lino_unbar_zone_label">Tunnel Zone (e.g. r1.example.com)</string>
+    <string name="lino_unbar_pubkey_label">Server Public Key</string>
+
+    <!-- SlipNet Settings -->
+    <string name="lino_slipnet_settings_title">SlipNet Settings</string>
+    <string name="lino_slipnet_add_server">Add SlipNet Server</string>
+    <string name="lino_slipnet_uri_or_name">SlipNet Link (slipnet:// / slipnet-enc://) or Name</string>
+    <string name="lino_slip_domain_label">Tunnel Domain or Server Host</string>
+    <string name="lino_slip_sec_tunnel">Default Protocol &amp; DNS Transport</string>
+    <string name="lino_proto_dnstt">DNSTT</string>
+    <string name="lino_proto_noizdns">NoizDNS</string>
+    <string name="lino_proto_vaydns">VayDNS</string>
+    <string name="lino_proto_soar">Soar</string>
+    <string name="lino_proto_slipstream">Slipstream QUIC</string>
+    <string name="lino_proto_naive">NaiveProxy</string>
+    <string name="lino_proto_ssh">SSH Tunnel</string>
+    <string name="lino_proto_tor">Tor Network</string>
+    <string name="lino_proto_doh">DNS over HTTPS</string>
+    <string name="lino_slip_dns_transport">DNS Transport</string>
+    <string name="lino_trans_udp">UDP</string>
+    <string name="lino_trans_tcp">TCP</string>
+    <string name="lino_trans_dot">DoT</string>
+    <string name="lino_trans_doh">DoH</string>
+    <string name="lino_slip_doh_url">DoH Endpoint URL</string>
+    <string name="lino_slip_sec_resolvers">Multi-Resolver Strategy</string>
+    <string name="lino_res_mode_fanout">Fanout (All)</string>
+    <string name="lino_res_mode_rr">Round Robin</string>
+    <string name="lino_res_mode_fastest">Fastest</string>
+    <string name="lino_slip_rr_spread">Spread Count</string>
+    <string name="lino_slip_max_payload">Max Payload</string>
+    <string name="lino_slip_sec_dnstt_noiz">DNSTT &amp; NoizDNS Options</string>
+    <string name="lino_slip_auth_mode">Authoritative Mode</string>
+    <string name="lino_slip_auth_mode_desc">Direct authoritative DNS tunnel queries</string>
+    <string name="lino_slip_stealth_mode">NoizDNS Stealth Mode</string>
+    <string name="lino_slip_stealth_mode_desc">Extra DPI obfuscation for strict networks</string>
+    <string name="lino_slip_sec_vaydns">VayDNS Wire Format Tuning</string>
+    <string name="lino_slip_vay_record">DNS Record Type</string>
+    <string name="lino_slip_vay_compat">DNSTT Compatibility Mode</string>
+    <string name="lino_slip_vay_qname">Max QNAME Length</string>
+    <string name="lino_slip_vay_rps">RPS Rate Limit</string>
+    <string name="lino_slip_keepalive">Keepalive (sec)</string>
+    <string name="lino_slip_idle_timeout">Idle Timeout (sec)</string>
+    <string name="lino_slip_sec_slipstream">Slipstream QUIC Options</string>
+    <string name="lino_cc_bbr">BBR</string>
+    <string name="lino_cc_dcubic">DCUBIC</string>
+    <string name="lino_slip_gso">Enable UDP GSO</string>
+    <string name="lino_slip_sec_ssh">SSH Obfuscation &amp; Chaining</string>
+    <string name="lino_slip_ssh_tls">SSH over TLS</string>
+    <string name="lino_slip_ssh_sni">Custom TLS SNI</string>
+    <string name="lino_slip_ssh_ws">SSH over WebSocket</string>
+    <string name="lino_slip_ssh_ws_path">WebSocket Path</string>
+    <string name="lino_slip_ssh_payload">Custom SSH Payload Injection</string>
+    <string name="lino_slip_sec_tor">Tor &amp; Pluggable Transports</string>
+    <string name="lino_tor_snowflake">Snowflake</string>
+    <string name="lino_tor_obfs4">obfs4</string>
+    <string name="lino_tor_meek">Meek</string>
+    <string name="lino_tor_custom">Custom Bridges</string>
+    <string name="lino_tor_direct">Direct Tor</string>
+    <string name="lino_slip_tor_bridges">Tor Bridge Lines</string>
+
+    <!-- DNS Scanner -->
+    <string name="lino_scanner_title">SlipNet DNS Scanner</string>
+    <string name="lino_scanner_source">Resolver Pool Source</string>
+    <string name="lino_scan_src_unbar_ir">Iranian Verified (2307)</string>
+    <string name="lino_scan_src_ir_lite">Iran CIDR Lite</string>
+    <string name="lino_scan_src_ir_full">Iran CIDR Full</string>
+    <string name="lino_scan_src_custom">Custom CIDR / IPs</string>
+    <string name="lino_scanner_custom_cidr">Custom IPs or CIDRs (one per line)</string>
+    <string name="lino_scanner_threads">Threads</string>
+    <string name="lino_scanner_timeout">Timeout (ms)</string>
+    <string name="lino_scanner_start">Start DNS Scan</string>
+    <string name="lino_scanner_stop">Stop Scan</string>
+    <string name="lino_scanner_progress">Scanned %1$d / %2$d</string>
+    <string name="lino_scanner_found">Working: %1$d</string>
+    <string name="lino_apply_unbar">Apply to Unbar</string>
+    <string name="lino_apply_slipnet">Apply to SlipNet</string>
+    <string name="lino_copy_top_resolvers">Copy Top 10 Clean Resolvers</string>
+    <string name="lino_scanner_applied_unbar">Top clean resolvers applied to Unbar</string>
+    <string name="lino_scanner_applied_slipnet">Top clean resolvers applied to SlipNet</string>
+    <string name="lino_resolver_clean_edns">Clean • EDNS0 Ready</string>
+    <string name="lino_resolver_clean">Clean</string>
+    <string name="lino_resolver_hijack">Possible Hijack</string>
+</resources>

@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- LinoVPN direct traffic status bar mark -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M5.2,3.6 C7.7,3.9 9.5,5.8 9.5,8.3 V14.6 C9.5,15.6 10.2,16.2 11.4,16.2 H17.2 C18.1,16.2 18.8,16.9 18.8,17.8 V19.0 C18.8,19.9 18.1,20.5 17.2,20.5 H11.0 C7.1,20.5 4.8,18.2 4.8,14.2 V4.2 C4.8,3.8 5.0,3.6 5.2,3.6 Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12.2,11.0 C12.2,7.3 15.1,4.8 18.8,4.8 C18.5,8.5 15.9,11.3 12.2,11.0 Z" />
+</vector>

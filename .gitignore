@@ -1,0 +1,28 @@
+# Build outputs & Gradle caches
+*.iml
+.gradle/
+.kotlin/
+.idea/
+build/
+app/build/
+captures/
+local.properties
+.externalNativeBuild/
+.cxx/
+
+# Signing secrets (NEVER commit!)
+keystore.properties
+*.jks
+*.keystore
+*.p12
+
+# Large prebuilt native libraries & APKs (distributed via GitHub Releases)
+app/libs/*.aar
+app/libs/**/*.so
+*.apk
+*.aab
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.log
