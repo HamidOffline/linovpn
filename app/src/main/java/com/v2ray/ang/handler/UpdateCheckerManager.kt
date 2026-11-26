@@ -23,25 +23,28 @@ object UpdateCheckerManager {
 
         val proxyUsername = SettingsManager.getSocksUsername()
         val proxyPassword = SettingsManager.getSocksPassword()
+        val httpPort = SettingsManager.getHttpPort()
+        val localProxyActive = isLocalProxyReachable(httpPort)
 
-        var response = HttpUtil.getUrlContent(
-            UrlContentRequest(
-                url = url,
-                timeout = 5000
-            )
-        )
-        if (response.isNullOrEmpty()) {
-            val httpPort = SettingsManager.getHttpPort()
+        var response: String? = null
+        val tryProxyFirst = localProxyActive && httpPort > 0
+        val order = if (tryProxyFirst) listOf(httpPort, 0) else listOf(0, httpPort)
+        for (port in order) {
+            if (port == 0 && !tryProxyFirst && response != null) break
+            if (port > 0 && !localProxyActive) continue
             response = HttpUtil.getUrlContent(
                 UrlContentRequest(
                     url = url,
-                    timeout = 5000,
-                    httpPort = httpPort,
-                    proxyUsername = proxyUsername,
-                    proxyPassword = proxyPassword
+                    timeout = 8000,
+                    httpPort = port,
+                    proxyUsername = if (port > 0) proxyUsername else null,
+                    proxyPassword = if (port > 0) proxyPassword else null
                 )
             )
-                ?: throw IllegalStateException("Failed to get response")
+            if (!response.isNullOrEmpty()) break
+        }
+        if (response.isNullOrEmpty()) {
+            throw IllegalStateException("Failed to get response")
         }
 
         val latestRelease = if (includePreRelease) {
@@ -102,5 +105,17 @@ object UpdateCheckerManager {
 
         return (exactAbi ?: universal ?: anyApk)?.browserDownloadUrl
             ?: throw IllegalStateException("No compatible APK found")
+    }
+
+    internal fun isLocalProxyReachable(port: Int): Boolean {
+        if (port <= 0) return false
+        return try {
+            java.net.Socket().use { sock ->
+                sock.connect(java.net.InetSocketAddress(AppConfig.LOOPBACK, port), 150)
+                true
+            }
+        } catch (_: Exception) {
+            false
+        }
     }
 }

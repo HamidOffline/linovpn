@@ -21,12 +21,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.Credentials
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.File
 import java.io.FileOutputStream
-import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Proxy
-import java.net.URL
+import java.util.concurrent.TimeUnit
 
 class CheckUpdateViewModel(application: Application) : BaseViewModel(application) {
 
@@ -72,14 +74,35 @@ class CheckUpdateViewModel(application: Application) : BaseViewModel(application
         _downloadProgress.value = 0
 
         viewModelScope.launch(Dispatchers.IO) {
+            val partFile = File(context.cacheDir, "linovpn_update.apk.part")
+            val outFile = File(context.cacheDir, "linovpn_update.apk")
             try {
-                val outFile = File(context.cacheDir, "linovpn_update.apk")
+                if (partFile.exists()) partFile.delete()
                 if (outFile.exists()) outFile.delete()
 
-                val downloaded = downloadFile(downloadUrl, outFile, useLocalProxy = false)
-                    || downloadFile(downloadUrl, outFile, useLocalProxy = true)
+                val httpPort = SettingsManager.getHttpPort()
+                val proxyActive = UpdateCheckerManager.isLocalProxyReachable(httpPort)
+                // Because VPN excludes our own app via addDisallowedApplication, use local proxy FIRST when connected!
+                val attempts = if (proxyActive) listOf(true, false) else listOf(false, true)
 
-                if (!downloaded || !outFile.exists() || outFile.length() < 1024L) {
+                var downloaded = false
+                for (useProxy in attempts) {
+                    if (partFile.exists()) partFile.delete()
+                    _downloadProgress.value = 0
+                    val ok = runCatching {
+                        downloadFile(downloadUrl, partFile, useLocalProxy = useProxy)
+                    }.getOrElse { err ->
+                        LogUtil.w(AppConfig.TAG, "Update download attempt (proxy=$useProxy) failed: ${err.message}")
+                        false
+                    }
+                    if (ok && partFile.exists() && partFile.length() >= 100_000L) {
+                        downloaded = true
+                        break
+                    }
+                }
+
+                if (!downloaded || !partFile.renameTo(outFile)) {
+                    if (partFile.exists()) partFile.delete()
                     withContext(Dispatchers.Main) {
                         _downloadProgress.value = null
                         toastError(R.string.lino_update_download_failed)
@@ -104,6 +127,7 @@ class CheckUpdateViewModel(application: Application) : BaseViewModel(application
                     context.startActivity(intent)
                 }
             } catch (e: Exception) {
+                if (partFile.exists()) partFile.delete()
                 LogUtil.e(AppConfig.TAG, "In-app update download/install failed", e)
                 withContext(Dispatchers.Main) {
                     _downloadProgress.value = null
@@ -115,51 +139,76 @@ class CheckUpdateViewModel(application: Application) : BaseViewModel(application
     }
 
     private fun downloadFile(urlStr: String, target: File, useLocalProxy: Boolean): Boolean {
-        var currentUrl = urlStr
-        repeat(6) {
-            val url = URL(currentUrl)
-            val conn = if (useLocalProxy) {
-                val httpPort = SettingsManager.getHttpPort()
-                val proxy = Proxy(Proxy.Type.HTTP, InetSocketAddress(AppConfig.LOOPBACK, httpPort))
-                url.openConnection(proxy) as HttpURLConnection
-            } else {
-                url.openConnection() as HttpURLConnection
+        val builder = OkHttpClient.Builder()
+            .connectTimeout(20, TimeUnit.SECONDS)
+            .readTimeout(45, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .followRedirects(true)
+            .followSslRedirects(true)
+
+        val proxyUsername = SettingsManager.getSocksUsername()
+        val proxyPassword = SettingsManager.getSocksPassword()
+
+        if (useLocalProxy) {
+            val httpPort = SettingsManager.getHttpPort()
+            if (httpPort <= 0) return false
+            builder.proxy(Proxy(Proxy.Type.HTTP, InetSocketAddress(AppConfig.LOOPBACK, httpPort)))
+            if (!proxyUsername.isNullOrBlank() && !proxyPassword.isNullOrBlank()) {
+                builder.proxyAuthenticator { _, response ->
+                    if (response.request.header("Proxy-Authorization") != null) {
+                        null
+                    } else {
+                        response.request.newBuilder()
+                            .header("Proxy-Authorization", Credentials.basic(proxyUsername, proxyPassword))
+                            .build()
+                    }
+                }
             }
-            conn.instanceFollowRedirects = false
-            conn.connectTimeout = 15000
-            conn.readTimeout = 30000
-            conn.setRequestProperty("User-Agent", "LinoVPN/${BuildConfig.VERSION_NAME}")
-            val code = conn.responseCode
-            if (code in 300..399) {
-                val loc = conn.getHeaderField("Location") ?: return false
-                conn.disconnect()
-                currentUrl = loc
-                return@repeat
-            }
-            if (code != HttpURLConnection.HTTP_OK) {
-                conn.disconnect()
+        }
+
+        val client = builder.build()
+        val request = Request.Builder()
+            .url(urlStr)
+            .get()
+            .header("User-Agent", "LinoVPN/${BuildConfig.VERSION_NAME}")
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                LogUtil.w(AppConfig.TAG, "Update download HTTP ${response.code} (proxy=$useLocalProxy)")
                 return false
             }
-            val total = conn.contentLengthLong
-            conn.inputStream.use { input ->
+            val body = response.body ?: return false
+            val total = body.contentLength()
+            var lastPct = -1
+            var readTotal = 0L
+
+            body.byteStream().use { input ->
                 FileOutputStream(target).use { output ->
-                    val buf = ByteArray(16 * 1024)
-                    var readTotal = 0L
+                    val buf = ByteArray(32 * 1024)
                     var read = input.read(buf)
                     while (read != -1) {
                         output.write(buf, 0, read)
                         readTotal += read
                         if (total > 0L) {
-                            _downloadProgress.value = ((readTotal * 100L) / total).toInt().coerceIn(0, 100)
+                            val pct = ((readTotal * 100L) / total).toInt().coerceIn(1, 100)
+                            if (pct != lastPct) {
+                                lastPct = pct
+                                _downloadProgress.value = pct
+                            }
                         }
                         read = input.read(buf)
                     }
+                    output.flush()
                 }
             }
-            conn.disconnect()
-            return true
+
+            if (total > 0L && readTotal < total) {
+                LogUtil.w(AppConfig.TAG, "Update download truncated ($readTotal/$total)")
+                return false
+            }
+            return readTotal >= 100_000L
         }
-        return false
     }
 
     fun dismissUpdateDialog() {
