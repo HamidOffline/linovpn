@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.v2ray.ang.AppConfig
+import com.v2ray.ang.handler.AppNotificationManager
 import com.v2ray.ang.handler.MmkvManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -80,19 +81,19 @@ private val DarkColor = darkColorScheme(
     tertiaryContainer = Color(0xFF00523B),
     onTertiaryContainer = Color(0xFFA8F7DF),
     error = Color(0xFFFF6B7A),
-    errorContainer = Color(0xFF7A1424),
-    onError = Color(0xFF4F000B),
+    errorContainer = Color(0xFF8C1D2E),
+    onError = Color(0xFF47000D),
     onErrorContainer = Color(0xFFFFDAD6),
-    background = Color(0xFF08101E), // Deep Midnight Sapphire
-    onBackground = Color(0xFFE8F1FF),
-    surface = Color(0xFF0B1526), // Dark Sapphire Surface
-    onSurface = Color(0xFFE8F1FF),
-    surfaceVariant = Color(0xFF1A2B45),
+    background = Color(0xFF0B1526), // Deep Midnight Navy
+    onBackground = Color(0xFFEBF3FF),
+    surface = Color(0xFF0B1526),
+    onSurface = Color(0xFFEBF3FF),
+    surfaceVariant = Color(0xFF172742), // Midnight Blue Slate
     onSurfaceVariant = Color(0xFF9EB4D1),
-    outline = Color(0xFF4B6485),
-    outlineVariant = Color(0xFF203452),
-    inverseSurface = Color(0xFFE8F1FF),
-    inverseOnSurface = Color(0xFF0B1526),
+    outline = Color(0xFF4A6282),
+    outlineVariant = Color(0xFF223654),
+    inverseSurface = Color(0xFFEBF3FF),
+    inverseOnSurface = Color(0xFF0C1829),
     inversePrimary = Color(0xFF006AE6),
     scrim = Color(0xFF000000),
     surfaceTint = Color(0xFF2CC5FF),
@@ -189,7 +190,6 @@ fun AppTheme(
         darkTheme -> DarkColor
         else -> LightColor
     }
-    val snackbarController = rememberAppSnackbarController()
 
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -205,15 +205,14 @@ fun AppTheme(
 
     CompositionLocalProvider(
         LocalDarkTheme provides darkTheme,
-        LocalAppSnackbar provides snackbarController
+        LocalAppNotification provides AppNotificationManager
     ) {
         MaterialTheme(
             colorScheme = colorScheme
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-                AppSnackbarBridge(controller = snackbarController)
+                AppNotificationBridge()
                 content()
-                AppSnackbarHost(hostState = snackbarController.hostState)
             }
         }
     }

@@ -48,7 +48,7 @@ enum class MainDestination(@DrawableRes val iconRes: Int, @StringRes val labelRe
     About(R.drawable.ic_about_24dp, R.string.title_about)
 }
 
-private val primaryDrawerItems = listOf(
+internal val primaryDrawerItems = listOf(
     MainDestination.Subscriptions,
     MainDestination.PerAppProxy,
     MainDestination.Routing,
@@ -56,19 +56,21 @@ private val primaryDrawerItems = listOf(
     MainDestination.Settings
 )
 
-private val tunnelToolItems = listOf(
+internal val tunnelToolItems = listOf(
     MainDestination.UnbarSettings,
     MainDestination.SlipNetSettings,
     MainDestination.DnsScanner
 )
 
-private val utilityDrawerItems = listOf(
+internal val utilityDrawerItems = listOf(
     MainDestination.TelegramChannel,
     MainDestination.CheckUpdate,
     MainDestination.Logcat,
     MainDestination.BackupRestore,
     MainDestination.About
 )
+
+internal val drawerItems = primaryDrawerItems + tunnelToolItems + utilityDrawerItems
 
 @Composable
 fun MainDrawerContent(drawerState: DrawerState, onNavigate: (MainDestination) -> Unit) {

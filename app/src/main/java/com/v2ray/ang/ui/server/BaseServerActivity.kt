@@ -1,5 +1,7 @@
 package com.v2ray.ang.ui.server
 
+import android.os.Bundle
+import android.view.WindowManager.LayoutParams
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -50,8 +53,10 @@ import com.v2ray.ang.ui.compose.AppTopBar
 import com.v2ray.ang.ui.compose.DeleteConfirmDialog
 import com.v2ray.ang.ui.compose.FormDropdownField
 import com.v2ray.ang.ui.compose.FormTextField
+import com.v2ray.ang.ui.compose.LocalEditorFocus
 import com.v2ray.ang.ui.compose.NavigationBarsSpacer
 import com.v2ray.ang.ui.compose.SettingsSwitchItem
+import com.v2ray.ang.ui.compose.rememberEditorFocus
 import com.v2ray.ang.ui.compose.verticalScrollbar
 import com.v2ray.ang.util.JsonUtil
 import kotlinx.coroutines.CoroutineScope
@@ -72,6 +77,15 @@ abstract class BaseServerActivity : BaseComponentActivity() {
      */
     protected val initialConfig: ProfileItem
         get() = checkNotNull(editor.opened.value) { "the profile is read before the screen shows its form" }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState != null) {
+            // The previous window's IME state is not valid until the new editor has focus.
+            val adjustment = window.attributes.softInputMode and LayoutParams.SOFT_INPUT_MASK_ADJUST
+            window.setSoftInputMode(adjustment or LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+        }
+    }
 
     /** PattNG: the save and the delete, which outlive this activity when it is recreated, see [ServerEditorViewModel]. */
     private val editor: ServerEditorViewModel by viewModels {
@@ -111,6 +125,7 @@ abstract class BaseServerActivity : BaseComponentActivity() {
             kcpHeaderOptions = stringArrayResource(R.array.header_type_kcp_and_quic).toList(),
             grpcModeOptions = stringArrayResource(R.array.mode_type_grpc).toList(),
             xhttpModeOptions = stringArrayResource(R.array.xhttp_mode).toList(),
+            xdriveServiceOptions = stringArrayResource(R.array.xdrive_service).toList(),
             streamSecurityOptions = stringArrayResource(R.array.streamsecurityxs).toList(),
             uTlsOptions = stringArrayResource(R.array.streamsecurity_utls).toList(),
             alpnOptions = stringArrayResource(R.array.streamsecurity_alpn).toList(),
@@ -124,6 +139,7 @@ abstract class BaseServerActivity : BaseComponentActivity() {
         val kcpHeaderOptions: List<String>,
         val grpcModeOptions: List<String>,
         val xhttpModeOptions: List<String>,
+        val xdriveServiceOptions: List<String>,
         val streamSecurityOptions: List<String>,
         val uTlsOptions: List<String>,
         val alpnOptions: List<String>,
@@ -176,6 +192,7 @@ abstract class BaseServerActivity : BaseComponentActivity() {
                 NetworkType.KCP.type -> options.kcpHeaderOptions
                 NetworkType.GRPC.type -> options.grpcModeOptions
                 NetworkType.XHTTP.type -> options.xhttpModeOptions
+                NetworkType.XDRIVE.type -> options.xdriveServiceOptions
                 else -> listOf("---")
             }
             if (headerOptions.size > 1) {
@@ -184,12 +201,14 @@ abstract class BaseServerActivity : BaseComponentActivity() {
                         when (state.network) {
                             NetworkType.GRPC.type -> R.string.server_lab_mode_type
                             NetworkType.XHTTP.type -> R.string.server_lab_xhttp_mode
+                            NetworkType.XDRIVE.type -> R.string.server_lab_xdrive_service
                             else -> R.string.server_lab_head_type
                         }
                     ),
                     when (state.network) {
                         NetworkType.GRPC.type -> state.mode
                         NetworkType.XHTTP.type -> state.xhttpMode
+                        NetworkType.XDRIVE.type -> state.xdriveService.ifBlank { headerOptions.first() }
                         else -> state.headerType
                     },
                     headerOptions,
@@ -197,28 +216,32 @@ abstract class BaseServerActivity : BaseComponentActivity() {
                         when (state.network) {
                             NetworkType.GRPC.type -> state.mode = it
                             NetworkType.XHTTP.type -> state.xhttpMode = it
+                            NetworkType.XDRIVE.type -> state.xdriveService = it
                             else -> state.headerType = it
                         }
                     }
                 )
             }
 
-            FormTextField(
-                stringResource(
-                    when (state.network) {
-                        NetworkType.TCP.type,
-                        NetworkType.HTTP_UPGRADE.type,
-                        NetworkType.XHTTP.type,
-                        NetworkType.H2.type -> R.string.server_lab_request_host_http
+            // xdrive reaches a storage service, not an HTTP host, so it has no host field.
+            if (state.network != NetworkType.XDRIVE.type) {
+                FormTextField(
+                    stringResource(
+                        when (state.network) {
+                            NetworkType.TCP.type,
+                            NetworkType.HTTP_UPGRADE.type,
+                            NetworkType.XHTTP.type,
+                            NetworkType.H2.type -> R.string.server_lab_request_host_http
 
-                        NetworkType.WS.type -> R.string.server_lab_request_host_ws
-                        NetworkType.GRPC.type -> R.string.server_lab_request_host_grpc
-                        else -> R.string.server_lab_request_host6
-                    }
-                ),
-                if (state.network == NetworkType.GRPC.type) state.authority else state.host,
-                { if (state.network == NetworkType.GRPC.type) state.authority = it else state.host = it }
-            )
+                            NetworkType.WS.type -> R.string.server_lab_request_host_ws
+                            NetworkType.GRPC.type -> R.string.server_lab_request_host_grpc
+                            else -> R.string.server_lab_request_host6
+                        }
+                    ),
+                    if (state.network == NetworkType.GRPC.type) state.authority else state.host,
+                    { if (state.network == NetworkType.GRPC.type) state.authority = it else state.host = it }
+                )
+            }
 
             if (state.network != NetworkType.KCP.type) {
                 FormTextField(
@@ -229,6 +252,7 @@ abstract class BaseServerActivity : BaseComponentActivity() {
                             NetworkType.XHTTP.type -> R.string.server_lab_path_xhttp
                             NetworkType.H2.type -> R.string.server_lab_path_h2
                             NetworkType.GRPC.type -> R.string.server_lab_path_grpc
+                            NetworkType.XDRIVE.type -> R.string.server_lab_xdrive_remote_folder
                             else -> R.string.server_lab_path
                         }
                     ),
@@ -242,6 +266,18 @@ abstract class BaseServerActivity : BaseComponentActivity() {
                     stringResource(R.string.server_lab_xhttp_extra),
                     state.xhttpExtra,
                     { state.xhttpExtra = it }
+                )
+            }
+            if (state.network == NetworkType.XDRIVE.type) {
+                FormTextField(
+                    stringResource(R.string.server_lab_xdrive_secrets),
+                    state.xdriveSecrets,
+                    { state.xdriveSecrets = it }
+                )
+                FormTextField(
+                    stringResource(R.string.server_lab_xdrive_extra),
+                    state.xdriveExtra,
+                    { state.xdriveExtra = it }
                 )
             }
             if (state.network == NetworkType.KCP.type) {
@@ -450,7 +486,7 @@ abstract class BaseServerActivity : BaseComponentActivity() {
                         }
                     },
                     enabled = !state.isFetchingCert,
-                    modifier = Modifier.padding(start = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp).then(LocalEditorFocus.current?.target() ?: Modifier)
                 ) {
                     Text(stringResource(R.string.pinned_ca256_action_fetch))
                 }
@@ -533,6 +569,10 @@ abstract class BaseServerActivity : BaseComponentActivity() {
             toast(R.string.server_lab_final_mask)
             return false
         }
+        if (!config.xdriveExtra.isNullOrBlank() && JsonUtil.parseString(config.xdriveExtra) == null) {
+            toast(R.string.server_lab_xdrive_extra)
+            return false
+        }
         // PattNG: the ECH outbound is an outbound JSON object with a tag of its own, used with echConfigList
         val echOutboundError = when (EchOutbound.validate(config)) {
             null -> null
@@ -581,6 +621,7 @@ abstract class BaseServerActivity : BaseComponentActivity() {
     ) {
         var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
         val scrollState = rememberScrollState()
+        val focus = rememberEditorFocus()
         // PattNG: read off the main thread, see ProfileEditorViewModel.isRunning; no delete is offered until it is known.
         val running by editor.isRunning.collectAsStateWithLifecycle()
         EditorOutcomeEffect(
@@ -602,16 +643,21 @@ abstract class BaseServerActivity : BaseComponentActivity() {
                 AppTopBar(
                     title = title,
                     onBackClick = { finish() },
+                    navigationIcon = {
+                        IconButton(onClick = ::finish, modifier = focus.target()) {
+                            Icon(painterResource(R.drawable.ic_arrow_back_24dp), stringResource(R.string.acc_back))
+                        }
+                    },
                     actions = {
                         if (editGuid.isNotEmpty() && running == false) {
-                            IconButton(onClick = { showDeleteDialog = true }) {
+                            IconButton(onClick = { showDeleteDialog = true }, modifier = focus.target()) {
                                 Icon(
                                     painterResource(R.drawable.ic_delete_24dp),
                                     stringResource(R.string.acc_delete)
                                 )
                             }
                         }
-                        IconButton(onClick = onSaveClick) {
+                        IconButton(onClick = onSaveClick, modifier = focus.target()) {
                             Icon(
                                 painterResource(R.drawable.ic_fab_check),
                                 stringResource(R.string.acc_save)
@@ -632,7 +678,7 @@ abstract class BaseServerActivity : BaseComponentActivity() {
                     .padding(bottom = 36.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                content()
+                CompositionLocalProvider(LocalEditorFocus provides focus) { content() }
                 NavigationBarsSpacer()
             }
         }

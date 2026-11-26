@@ -89,8 +89,11 @@ internal fun SubscriptionInfoCard(
     fallbackTitle: String,
     onOpenLink: (String) -> Unit,
     onRefresh: () -> Unit,
-    onPingGroup: () -> Unit,
+    onPingGroup: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    actionButton: @Composable (Int, String, Boolean, () -> Unit) -> Unit = { icon, label, _, click ->
+        CardIconButton(icon, label, click)
+    },
 ) {
     val model = remember(info) { buildSubscriptionInfoUiModel(info, System.currentTimeMillis()) }
 
@@ -114,34 +117,28 @@ internal fun SubscriptionInfoCard(
                     overflow = TextOverflow.Ellipsis,
                 )
                 model.supportUrl?.let { url ->
-                    CardIconButton(
-                        iconRes = if (SubscriptionInfoParser.isTelegramLink(url)) {
+                    actionButton(
+                        if (SubscriptionInfoParser.isTelegramLink(url)) {
                             R.drawable.ic_telegram_24dp
                         } else {
                             R.drawable.ic_feedback_24dp
                         },
-                        contentDescription = stringResource(R.string.sub_info_open_support),
-                        onClick = { onOpenLink(url) },
-                    )
+                        stringResource(R.string.sub_info_open_support),
+                        false,
+                    ) { onOpenLink(url) }
                 }
                 model.webPageUrl?.let { url ->
+                    actionButton(R.drawable.ic_about_24dp, stringResource(R.string.sub_info_open_page), false) { onOpenLink(url) }
+                }
+                onPingGroup?.let { pingAction ->
                     CardIconButton(
-                        iconRes = R.drawable.ic_about_24dp,
-                        contentDescription = stringResource(R.string.sub_info_open_page),
-                        onClick = { onOpenLink(url) },
+                        iconRes = R.drawable.ic_ping_24dp,
+                        contentDescription = stringResource(R.string.lino_sub_ping_action),
+                        onClick = pingAction,
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                 }
-                CardIconButton(
-                    iconRes = R.drawable.ic_ping_24dp,
-                    contentDescription = stringResource(R.string.lino_sub_ping_action),
-                    onClick = onPingGroup,
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-                CardIconButton(
-                    iconRes = R.drawable.ic_refresh_24dp,
-                    contentDescription = stringResource(R.string.title_sub_update),
-                    onClick = onRefresh,
-                )
+                actionButton(R.drawable.ic_refresh_24dp, stringResource(R.string.title_sub_update), true, onRefresh)
             }
 
             // One semantics node for the read-only figures so TalkBack reads them in one go.

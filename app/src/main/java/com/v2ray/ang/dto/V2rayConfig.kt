@@ -1,5 +1,6 @@
 package com.v2ray.ang.dto
 
+import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import com.v2ray.ang.AppConfig
 import com.v2ray.ang.enums.EConfigType
@@ -291,17 +292,28 @@ data class V2rayConfig(
             }
 
             data class XdriveSettingsBean(
-                var service: String,
-                var remoteFolder: String,
-                var secrets: List<String>,
-                var concurrency: Int? = null,
-                var flushIntervalMs: Int? = null,
-                var maxPollIntervalMs: Int? = null,
-                var eagerWindowMs: Int? = null,
+                var service: String? = null,
+                var remoteFolder: String? = null,
+                var secrets: List<String>? = null,
                 var segmentBytes: Int? = null,
+                var flushIntervalMs: Int? = null,
                 var pollIntervalMs: Int? = null,
+                var maxPollIntervalMs: Int? = null,
+                var sessionTtlSeconds: Int? = null,
+                var concurrency: Int? = null,
+                var eagerWindowMs: Int? = null,
+                var holeTimeoutMs: Int? = null,
+                var template: JsonObject? = null,
+                var s3: S3Bean? = null,
                 var xmux: XmuxSettingsBean? = null
             ) {
+                data class S3Bean(
+                    var endpoint: String? = null,
+                    var region: String? = null,
+                    var bucket: String? = null,
+                    var pathStyle: Boolean? = null
+                )
+
                 data class XmuxSettingsBean(
                     var maxConnections: Any? = null,
                     var maxConcurrency: Any? = null,
@@ -365,6 +377,14 @@ data class V2rayConfig(
             var xudpProxyUDP443: String? = null,
         )
 
+        /**
+         * PattNG: the JSON of a custom outbound, as its profile stores it, that this outbound was read from. It goes
+         * into the configuration in place of this outbound's JSON, with what the app changed on this outbound, see
+         * CustomOutboundFmt.asWritten. Never serialized.
+         */
+        @Transient
+        var customOutbound: String? = null
+
         fun getServerAddress(): String? {
             return if (protocol.equals(EConfigType.WIREGUARD.name, true)) {
                 settings?.peers?.firstOrNull()?.endpoint?.substringBeforeLast(":")
@@ -401,7 +421,8 @@ data class V2rayConfig(
         val disableCache: Boolean? = null,
         val queryStrategy: String? = null,
         val disableFallbackIfMatch: Boolean? = null,
-        val enableParallelQuery: Boolean? = null,
+        var serveStale: Boolean? = null,
+        var enableParallelQuery: Boolean? = null,
         val tag: String? = null
     ) {
         data class ServersBean(

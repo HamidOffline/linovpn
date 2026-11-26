@@ -135,6 +135,32 @@ object CoreOutboundBuilder {
      */
     internal fun muxConcurrency(text: String?, default: Int): Int = Utils.parseInt(text?.trim(), default)
 
+    fun buildXdriveSettings(profileItem: ProfileItem): OutboundBean.StreamSettingsBean.XdriveSettingsBean? {
+        val extra = profileItem.xdriveExtra?.nullIfBlank()
+        val settings = if (extra == null) {
+            OutboundBean.StreamSettingsBean.XdriveSettingsBean()
+        } else {
+            JsonUtil.fromJsonSafe(extra, OutboundBean.StreamSettingsBean.XdriveSettingsBean::class.java) ?: return null
+        }
+        profileItem.xdriveService?.nullIfBlank()?.let { settings.service = it.trim() }
+        if (settings.service.isNullOrBlank() || settings.service == "Google Drive") {
+            settings.service = AppConfig.XDRIVE_SERVICE_GOOGLE_DRIVE
+        }
+        profileItem.path?.nullIfBlank()?.let { settings.remoteFolder = it.trim() }
+        profileItem.xdriveSecrets?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }?.ifEmpty { null }
+            ?.let { settings.secrets = it }
+        return settings
+    }
+
+    fun buildXdriveMux(concurrency: String?, xudpConcurrency: String?, xudpProxyUDP443: String?): OutboundBean.MuxBean =
+        OutboundBean.MuxBean(
+            enabled = true,
+            concurrency = concurrency?.trim()?.toIntOrNull()?.takeIf { it > 0 } ?: 8,
+            xudpConcurrency = xudpConcurrency?.trim()?.toIntOrNull()?.takeIf { it >= 0 }
+                ?: AppConfig.DEFAULT_MUX_XUDP_CONCURRENCY.toInt(),
+            xudpProxyUDP443 = xudpProxyUDP443?.takeIf { it.isNotBlank() && it != "skip" } ?: "reject"
+        )
+
     /** Applies global outbound options (mux, protocol-specific tweaks, etc.). */
     private fun updateOutboundWithGlobalSettings(outbound: OutboundBean): Boolean {
         try {
@@ -154,7 +180,15 @@ object CoreOutboundBuilder {
                 muxEnabled = false
             }
 
-            if (muxEnabled) {
+            if (outbound.streamSettings?.network == NetworkType.XDRIVE.type) {
+                // Xray-core refuses an xdrive outbound unless Mux.Cool carries every connection,
+                // so the global mux switch does not apply to this transport.
+                outbound.mux = buildXdriveMux(
+                    concurrency = MmkvManager.decodeSettingsString(AppConfig.PREF_MUX_CONCURRENCY, "8"),
+                    xudpConcurrency = MmkvManager.decodeSettingsString(AppConfig.PREF_MUX_XUDP_CONCURRENCY, AppConfig.DEFAULT_MUX_XUDP_CONCURRENCY),
+                    xudpProxyUDP443 = MmkvManager.decodeSettingsString(AppConfig.PREF_MUX_XUDP_QUIC, "reject")
+                )
+            } else if (muxEnabled) {
                 outbound.mux?.enabled = true
                 outbound.mux?.concurrency = muxConcurrency(MmkvManager.decodeSettingsString(AppConfig.PREF_MUX_CONCURRENCY, "8"), 8)
                 outbound.mux?.xudpConcurrency = muxConcurrency(
@@ -242,7 +276,8 @@ object CoreOutboundBuilder {
             settings.port = profileItem.serverPort.orEmpty().toInt()
             settings.id = profileItem.password.orEmpty()
             settings.encryption = profileItem.method
-            settings.flow = profileItem.flow
+            // Xray-core rejects VLESS "flow" on the xdrive transport.
+            settings.flow = if (profileItem.network == NetworkType.XDRIVE.type) null else profileItem.flow
         }
 
         val sni = outboundBean?.streamSettings?.let {
@@ -374,7 +409,27 @@ object CoreOutboundBuilder {
      * IPv6 address without its brackets, the IPv4 ones alone when IPv6 is off, each its own entry; and when none is
      * left, the default ones, see [AppConfig.WIREGUARD_LOCAL_REMOTE_DNS], split as well.
      */
-    internal fun wireguardRemoteDns(remoteDNS: String?, ipv6Enabled: Boolean): Pair<List<String>, List<String>> {
+    internal fun wireguardRemoteDns(remoteDNS: String?, ipv6Enabled: Boolean): Pair<List<String>, List<String>> =
+        remoteDnsServers(remoteDNS, AppConfig.WIREGUARD_LOCAL_REMOTE_DNS, ipv6Enabled)
+
+    /**
+     * PattNG: the remote DNS servers of a MASQUE outbound, and the entries of [remoteDNS] left out, as for WireGuard,
+     * see [wireguardRemoteDns]: the core parses them as it parses WireGuard's, and refuses the whole configuration as
+     * well on anything netip.ParseAddr refuses. When none is left, the default ones of MASQUE, see
+     * [AppConfig.MASQUE_LOCAL_REMOTE_DNS].
+     */
+    internal fun masqueRemoteDns(remoteDNS: String?, ipv6Enabled: Boolean): Pair<List<String>, List<String>> =
+        remoteDnsServers(remoteDNS, AppConfig.MASQUE_LOCAL_REMOTE_DNS, ipv6Enabled)
+
+    /**
+     * The servers of [remoteDNS] the core takes, or else those of [defaults], and the entries left out, see
+     * [wireguardRemoteDns].
+     */
+    private fun remoteDnsServers(
+        remoteDNS: String?,
+        defaults: String,
+        ipv6Enabled: Boolean,
+    ): Pair<List<String>, List<String>> {
         fun entries(list: String?) = list?.split(",").orEmpty().map { it.trim() }.filter { it.isNotEmpty() }
         fun address(entry: String): String? {
             val bare = if (entry.startsWith("[") && entry.endsWith("]")) entry.substring(1, entry.length - 1) else entry
@@ -384,7 +439,7 @@ object CoreOutboundBuilder {
         val read = entries(remoteDNS).map { entry -> entry to address(entry) }
         val leftOut = read.filter { it.second == null }.map { it.first }
         val usable = read.mapNotNull { it.second }.filter { ipv6Enabled || !it.contains(":") }
-        val servers = usable.ifEmpty { entries(AppConfig.WIREGUARD_LOCAL_REMOTE_DNS).filter { ipv6Enabled || !it.contains(":") } }
+        val servers = usable.ifEmpty { entries(defaults).filter { ipv6Enabled || !it.contains(":") } }
         return servers to leftOut
     }
 
@@ -550,27 +605,25 @@ object CoreOutboundBuilder {
             ?.ifEmpty { null }
             ?: listOf(AppConfig.MASQUE_LOCAL_ADDRESS_V4, AppConfig.MASQUE_LOCAL_ADDRESS_V6)
 
-        val addresses = if (MmkvManager.decodeSettingsBool(AppConfig.PREF_IPV6_ENABLED) == true) {
+        // PattNG: "Enable IPv6" is on while no value is stored, see AppConfig.DEFAULT_IPV6_ENABLED.
+        val addresses = if (MmkvManager.decodeSettingsBool(AppConfig.PREF_IPV6_ENABLED, AppConfig.DEFAULT_IPV6_ENABLED)) {
             rawAddresses
         } else {
             val ipv4Addresses = rawAddresses.filter { !it.contains(":") }
             ipv4Addresses.ifEmpty { listOf(AppConfig.MASQUE_LOCAL_ADDRESS_V4) }
         }
 
-        val defaultDns = AppConfig.MASQUE_LOCAL_REMOTE_DNS.split(",").map { it.trim() }
-
-        val rawDNS = profileItem.remoteDNS
-            ?.split(",")
-            ?.map { it.trim() }
-            ?.filter { it.isNotEmpty() }
-            ?.ifEmpty { null }
-            ?: defaultDns
-
-        val remotes = if (MmkvManager.decodeSettingsBool(AppConfig.PREF_IPV6_ENABLED) == true) {
-            rawDNS
-        } else {
-            rawDNS.filter { !it.contains(":") }
-                .ifEmpty { defaultDns.filter { !it.contains(":") } }
+        // PattNG: only what the core takes as a remote DNS server, see masqueRemoteDns
+        val (remotes, leftOut) = masqueRemoteDns(
+            profileItem.remoteDNS,
+            ipv6Enabled = MmkvManager.decodeSettingsBool(AppConfig.PREF_IPV6_ENABLED, AppConfig.DEFAULT_IPV6_ENABLED),
+        )
+        if (leftOut.isNotEmpty()) {
+            // The entries themselves stay out of the log: one may be a DNS URL with an account in it.
+            LogUtil.w(
+                AppConfig.TAG,
+                "CoreOutboundBuilder: MASQUE profile '${profileItem.remarks}': ${leftOut.size} remoteDNS entries left out, not IP addresses"
+            )
         }
 
         outboundBean.settings?.let { masque ->
@@ -754,6 +807,13 @@ object CoreOutboundBuilder {
                 xhttpSetting.mode = xhttpMode
                 xhttpSetting.extra = JsonUtil.parseString(xhttpExtra)
                 streamSettings.xhttpSettings = xhttpSetting
+            }
+
+            NetworkType.XDRIVE.type -> {
+                streamSettings.xdriveSettings = buildXdriveSettings(profileItem)
+                if (streamSettings.xdriveSettings == null) {
+                    LogUtil.e(AppConfig.TAG, "Failed to build xdrive settings: extra is not a valid XDriveConfig JSON object")
+                }
             }
 
             NetworkType.H2.type, NetworkType.HTTP.type -> {
