@@ -135,7 +135,7 @@ fun ProxyChainScreen(
     var isRemarksError by rememberSaveable { mutableStateOf(false) }
     var members by rememberSaveable { mutableStateOf(initialMembers) }
     var memberKeys by rememberSaveable { mutableStateOf(List(initialMembers.size) { UUID.randomUUID().toString() }) }
-    var showProfileDeleteConfirm by remember { mutableStateOf(false) }
+    var showProfileDeleteConfirm by rememberSaveable { mutableStateOf(false) }
     var memberToDeleteKey by rememberSaveable { mutableStateOf<String?>(null) }
     var editingMemberKey by rememberSaveable { mutableStateOf<String?>(null) }
     val showDelete = editGuid.isNotEmpty() && !isRunning

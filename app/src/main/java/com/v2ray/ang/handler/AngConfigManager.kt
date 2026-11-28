@@ -349,10 +349,7 @@ object AngConfigManager {
         if (server == null) {
             return 0
         }
-        if (server.contains("inbounds")
-            && server.contains("outbounds")
-            && server.contains("routing")
-        ) {
+        if (server.contains("outbounds")) {
             try {
                 val serverList: Array<Any> =
                     JsonUtil.fromJson(server, Array<Any>::class.java) ?: arrayOf()
@@ -672,6 +669,24 @@ object AngConfigManager {
         append: Boolean,
         trailingExtraConfigs: String = "",
     ): Int {
+        if (server.isNullOrBlank()) {
+            return if (trailingExtraConfigs.isNotBlank()) parseBatchConfig(trailingExtraConfigs, subid, append) else 0
+        }
+
+        val trimmed = server.trim()
+        val isJsonConfig = (trimmed.startsWith("[") && trimmed.endsWith("]")) ||
+                (trimmed.startsWith("{") && trimmed.endsWith("}"))
+
+        if (isJsonConfig) {
+            val mainCount = parseCustomConfigServer(server, subid, append)
+            val extraCount = if (trailingExtraConfigs.isNotBlank()) {
+                parseBatchConfig(trailingExtraConfigs, subid, append = true)
+            } else {
+                0
+            }
+            return mainCount + extraCount
+        }
+
         val decoded = Utils.decode(server)
         val combinedDecoded = if (trailingExtraConfigs.isNotBlank() && decoded.isNotBlank()) {
             "$decoded\n$trailingExtraConfigs"
@@ -680,7 +695,7 @@ object AngConfigManager {
         }
         var count = parseBatchConfig(combinedDecoded, subid, append)
         if (count <= 0) {
-            val combinedRaw = if (trailingExtraConfigs.isNotBlank() && !server.isNullOrBlank()) {
+            val combinedRaw = if (trailingExtraConfigs.isNotBlank()) {
                 "$server\n$trailingExtraConfigs"
             } else {
                 server

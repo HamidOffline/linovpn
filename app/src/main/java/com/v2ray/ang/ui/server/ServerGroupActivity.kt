@@ -185,7 +185,7 @@ fun ServerGroupScreen(
     val pickedSubscription = subscriptions.pick(subscriptionId)
     var testOutbounds by rememberSaveable { mutableStateOf(initialTestOutbounds) }
     var fallbackTag by rememberSaveable { mutableStateOf(initialFallbackTag) }
-    var showDeleteConfirm by remember { mutableStateOf(false) }
+    var showDeleteConfirm by rememberSaveable { mutableStateOf(false) }
     var showFallbackDialog by rememberSaveable { mutableStateOf(false) }
     val showDelete = editGuid.isNotEmpty() && !isRunning
     val selectedType = typeEntries.indexOf(typeValue).coerceAtLeast(0).toString()

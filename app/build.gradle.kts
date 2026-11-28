@@ -34,8 +34,8 @@ android {
         applicationId = "com.linovpn.pro"
         minSdk = 29
         targetSdk = 37
-        versionCode = 305
-        versionName = "3.0.5"
+        versionCode = 306
+        versionName = "3.0.6"
 
         val abiFilterList = (properties["ABI_FILTERS"] as? String)?.split(';')
         splits {

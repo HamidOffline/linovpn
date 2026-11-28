@@ -18,6 +18,7 @@ import com.v2ray.ang.dto.entities.ProfileEntry
 import com.v2ray.ang.dto.entities.ProfileItem
 import com.v2ray.ang.dto.entities.RulesetItem
 import com.v2ray.ang.dto.entities.SubscriptionItem
+import com.v2ray.ang.dto.entities.ensureUniqueIds
 import com.v2ray.ang.enums.EConfigType
 import com.v2ray.ang.enums.RoutingType
 import com.v2ray.ang.enums.VpnInterfaceAddressConfig
@@ -117,7 +118,9 @@ object SettingsManager {
      */
     private fun resetRoutingRulesetsCommon(rulesetList: MutableList<RulesetItem>): Boolean {
         val stored = changeRoutingRulesets {
-            MmkvManager.encodeRoutingRulesets(rulesetsAfterImport(MmkvManager.decodeRoutingRulesets(), rulesetList))
+            val rules = rulesetsAfterImport(MmkvManager.decodeRoutingRulesets(), rulesetList).toMutableList()
+            rules.ensureUniqueIds()
+            MmkvManager.encodeRoutingRulesets(rules)
         }
         if (!stored) LogUtil.e(AppConfig.TAG, "SettingsManager: the storage refused the imported routing rulesets")
         return stored
@@ -625,6 +628,7 @@ object SettingsManager {
         ensureDefaultValue(AppConfig.PREF_HEV_TUNNEL_RW_TIMEOUT, AppConfig.HEVTUN_RW_TIMEOUT)
         ensureDefaultValue(AppConfig.PREF_MUX_CONCURRENCY, "8")
         ensureDefaultValue(AppConfig.PREF_MUX_XUDP_CONCURRENCY, AppConfig.DEFAULT_MUX_XUDP_CONCURRENCY)
+        ensureDefaultValue(AppConfig.PREF_HYSTERIA_PORT_HOPPING_INTERVAL, "30")
         ensureDefaultValue(AppConfig.PREF_OBSERVATORY_LEAST_PING_INTERVAL, AppConfig.OBSERVATORY_LEAST_PING_INTERVAL)
         ensureDefaultValue(AppConfig.PREF_OBSERVATORY_LEAST_LOAD_INTERVAL, AppConfig.OBSERVATORY_LEAST_LOAD_INTERVAL)
         ensureDefaultValue(AppConfig.PREF_OBSERVATORY_LEAST_LOAD_METHOD, AppConfig.OBSERVATORY_LEAST_LOAD_METHOD)

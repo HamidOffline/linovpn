@@ -40,6 +40,7 @@ object AppConfig {
     const val PREF_MUX_XUDP_CONCURRENCY = "pref_mux_xudp_concurrency"
     const val PREF_MUX_XUDP_QUIC = "pref_mux_xudp_quic"
     const val PREF_OBSERVATORY_LEAST_PING_INTERVAL = "pref_observatory_least_ping_interval"
+    const val PREF_HYSTERIA_PORT_HOPPING_INTERVAL = "pref_hysteria_port_hopping_interval"
     const val PREF_OBSERVATORY_LEAST_LOAD_INTERVAL = "pref_observatory_least_load_interval"
     const val PREF_OBSERVATORY_LEAST_LOAD_METHOD = "pref_observatory_least_load_method"
     const val PREF_OBSERVATORY_LEAST_LOAD_SAMPLING = "pref_observatory_least_load_sampling"
